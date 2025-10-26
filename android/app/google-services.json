@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "169096874665",
+    "project_id": "se-380-project-penpal",
+    "storage_bucket": "se-380-project-penpal.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:169096874665:android:c7d499067dda76be3937b8",
+        "android_client_info": {
+          "package_name": "com.example.se_380_project_penpal"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCKpLCQELXQf4mt4OSIjFGdpinNNhw51_Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
