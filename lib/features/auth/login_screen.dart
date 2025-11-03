@@ -22,8 +22,8 @@ class LoginScreen extends StatelessWidget {
 
               Center(
                 child: Container(
-                  width: 140,
-                  height: 140,
+                  width: 120,
+                  height: 120,
                   decoration: BoxDecoration(
                     color: const Color(0xFFF8E8C8),
                     shape: BoxShape.circle,
@@ -40,22 +40,21 @@ class LoginScreen extends StatelessWidget {
                     child: Icon(
                       FontAwesomeIcons.envelopeOpenText,
                       color: Color(0xFF6B4423),
-                      size: 70,
+                      size: 55,
                     ),
                   ),
                 ),
               ),
-              const SizedBox(height: 30),
+              const SizedBox(height: 20),
 
 
               const Text(
                 'PenPal',
                 style: TextStyle(
-                  fontSize: 46,
-                  fontWeight: FontWeight.bold,
+                  fontSize: 70,
                   color: Color(0xFF6B4423),
-                  fontFamily: 'Georgia',
-                  letterSpacing: 2.0,
+                  fontFamily: 'DancingScript',
+                  fontWeight: FontWeight.normal,
                 ),
               ),
               const SizedBox(height: 10),
