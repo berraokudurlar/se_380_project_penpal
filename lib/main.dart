@@ -22,8 +22,8 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'PenPal App',
-      theme: AppTheme.nostalgic, // ✨ Our custom letter theme
-      home: const LoginScreen(), // ⬅️ Start at login now
+      theme: AppTheme.penpal,
+      home: const LoginScreen(),
     );
   }
 }
