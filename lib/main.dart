@@ -10,7 +10,6 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-
   runApp(const MyApp());
 }
 
@@ -21,8 +20,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'PenPal App',
-      theme: AppTheme.penpal,
+      title: 'KeyPal',
+      theme: AppTheme.keypal,
       home: const LoginScreen(),
     );
   }

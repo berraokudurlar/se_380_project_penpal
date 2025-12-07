@@ -50,7 +50,7 @@ dependencies:
   json_annotation: ^4.9.0
   flutter_quill: ^11.0.0-dev.15
   flutter_quill_extensions: ^11.0.0-dev.15
-
+  lottie: ^3.0.0
 
 
 dev_dependencies:
@@ -82,6 +82,8 @@ flutter:
   uses-material-design: true
   assets:
     - assets/fonts/
+    - assets/textures/
+    - assets/images_animations/
   fonts:
     - family: GreatVibes
       fonts:

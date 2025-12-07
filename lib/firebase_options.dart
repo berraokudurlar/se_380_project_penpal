@@ -65,4 +65,5 @@ class DefaultFirebaseOptions {
     storageBucket: 'se-380-project-penpal.firebasestorage.app',
     iosBundleId: 'com.example.se380ProjectPenpal',
   );
+
 }

@@ -1,37 +1,96 @@
 import 'package:flutter/material.dart';
-import 'package:se_380_project_penpal/theme/app_theme.dart'; // adjust import
+import 'package:lottie/lottie.dart';
+import 'package:se_380_project_penpal/theme/app_theme.dart';
 
-class LetterboxScreen extends StatelessWidget {
+class LetterboxScreen extends StatefulWidget {
   const LetterboxScreen({super.key});
 
   @override
+  State<LetterboxScreen> createState() => _LetterboxScreenState();
+}
+
+class _LetterboxScreenState extends State<LetterboxScreen> {
+  final PageController _pageController = PageController();
+  int _currentPage = 0;
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final letters = <String>[]; // placeholder list
+    // Replace with real letter content
+    final letters = <Map<String, String>>[
+      {
+        'from': 'Sarah',
+        'date': 'November 15, 2024',
+        'content':
+        "Dear friend,\n\nI hope you're doing well! Today I walked by the old bookshop and thought of your last letter...\n\nThe autumn leaves were falling, reminding me of the stories you used to tell about your grandmother's garden. I picked up a beautiful leather-bound journal that I think you would absolutely love.\n\nHow have you been? I'd love to hear about your recent adventures.\n\nWith warm regards,\nSarah"
+      },
+      {
+        'from': 'Alex',
+        'date': 'November 20, 2024',
+        'content':
+        "Hello friend,\n\nI finally finished the novel you recommended. It was brilliant!\n\nThe way the author wove the narrative through different timelines was masterful. I found myself staying up until 3 AM just to finish the last few chapters. You were absolutely right about the plot twist in chapter 12 - I never saw it coming!\n\nThank you for always having such wonderful book recommendations. What should I read next?\n\nCheers,\nAlex"
+      },
+      {
+        'from': 'Jamie',
+        'date': 'November 25, 2024',
+        'content':
+        "My dearest pen pal,\n\nToday was a rainy day, so I stayed inside and wrote this for you...\n\nThere's something magical about rainy afternoons, don't you think? The sound of raindrops on the windowpane, a warm cup of tea, and good thoughts of friends far away.\n\nI've been thinking about our conversation last month about traveling. Perhaps we could finally plan that trip we've been discussing?\n\nStay dry and cozy,\nJamie"
+      },
+    ];
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-
       body: letters.isEmpty
           ? _buildEmptyState()
-          : _buildLetterList(letters),
+          : Column(
+        children: [
+          Expanded(
+            child: PageView.builder(
+              controller: _pageController,
+              onPageChanged: (index) {
+                setState(() {
+                  _currentPage = index;
+                });
+              },
+              itemCount: letters.length,
+              itemBuilder: (context, index) {
+                return _buildLetterCard(
+                  letters[index]['from']!,
+                  letters[index]['date']!,
+                  letters[index]['content']!,
+                );
+              },
+            ),
+          ),
+          _buildPageIndicator(letters.length),
+          const SizedBox(height: 20),
+        ],
+      ),
     );
   }
 
-  /// ----------------------------
-  /// EMPTY STATE (No Mail Yet)
-  /// ----------------------------
+  /// ---------------------------------------------------------
+  /// EMPTY STATE (no letters yet)
+  /// ---------------------------------------------------------
   Widget _buildEmptyState() {
     return Center(
       child: Column(
         mainAxisSize: MainAxisSize.min,
-        children: const [
-          Text(
-            "📭",
-            style: TextStyle(fontSize: 70),
+        children: [
+          Lottie.asset(
+            'assets/images_animations/Message received.json',
+            width: 300,
+            height: 300,
+            repeat: true,
           ),
-          SizedBox(height: 12),
-          Text(
-            "No letters yet.\nWrite to your penpal!",
+          const SizedBox(height: 24),
+          const Text(
+            "No letters yet.\nWrite to your key pal!",
             textAlign: TextAlign.center,
             style: TextStyle(
               color: AppColors.textMedium,
@@ -44,61 +103,134 @@ class LetterboxScreen extends StatelessWidget {
     );
   }
 
-  /// ----------------------------
-  /// LETTER LIST (Theme-Styled)
-  /// ----------------------------
-  Widget _buildLetterList(List<String> letters) {
-    return ListView.separated(
-      padding: const EdgeInsets.all(16),
-      itemCount: letters.length,
-      separatorBuilder: (_, __) => const SizedBox(height: 12),
+  /// ---------------------------------------------------------
+  /// LETTER CARD (postcard style with paper background)
+  /// ---------------------------------------------------------
+  Widget _buildLetterCard(String from, String date, String content) {
+    return Container(
+      color: Colors.transparent,
+      padding: const EdgeInsets.all(20),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          return Center(
+            child: Container(
+              width: constraints.maxWidth * 0.95,
+              height: constraints.maxHeight * 0.9,
+              decoration: const BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage('assets/images_animations/background.png'),
+                  fit: BoxFit.cover,
+                ),
+              ),
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(32),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Letter header with stamp
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'From: $from',
+                                style: TextStyle(
+                                  fontFamily: 'Georgia',
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.brown.shade800,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                date,
+                                style: TextStyle(
+                                  fontFamily: 'Georgia',
+                                  fontSize: 13,
+                                  fontStyle: FontStyle.italic,
+                                  color: Colors.brown.shade600,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        // Decorative stamp
+                        Image.asset(
+                          'assets/images_animations/delphinum backeri stamp.png',
+                          width: 100,
+                          height: 100,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Icon(
+                              Icons.mail,
+                              color: Colors.brown.shade600,
+                              size: 30,
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+                    // Decorative line
+                    Container(
+                      height: 1,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            Colors.brown.shade300,
+                            Colors.brown.shade100,
+                            Colors.brown.shade300,
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                    // Letter body
+                    Text(
+                      content,
+                      style: const TextStyle(
+                        fontFamily: "Georgia",
+                        fontSize: 17,
+                        height: 1.6,
+                        color: Colors.black87,
+                        letterSpacing: 0.3,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
 
-      itemBuilder: (context, index) {
-        final letter = letters[index];
-
-        return Container(
+  /// ---------------------------------------------------------
+  /// PAGE INDICATOR (dots)
+  /// ---------------------------------------------------------
+  Widget _buildPageIndicator(int totalPages) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: List.generate(
+        totalPages,
+            (index) => AnimatedContainer(
+          duration: const Duration(milliseconds: 300),
+          margin: const EdgeInsets.symmetric(horizontal: 4),
+          width: _currentPage == index ? 24 : 8,
+          height: 8,
           decoration: BoxDecoration(
-            color: AppColors.accentLight,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: AppColors.border.withOpacity(0.6),
-              width: 1.2,
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.brown.withOpacity(0.15),
-                blurRadius: 5,
-                offset: const Offset(3, 4),
-              ),
-            ],
+            color: _currentPage == index
+                ? Colors.brown.shade600
+                : Colors.brown.shade300,
+            borderRadius: BorderRadius.circular(4),
           ),
-
-          child: ListTile(
-            contentPadding: const EdgeInsets.symmetric(
-              vertical: 12,
-              horizontal: 16,
-            ),
-
-            leading: const Icon(
-              Icons.mail_outline,
-              color: AppColors.textDark,
-            ),
-
-            title: Text(
-              letter,
-              style: const TextStyle(
-                fontFamily: 'Georgia',
-                fontSize: 18,
-                color: AppColors.textDark,
-              ),
-            ),
-
-            onTap: () {
-              // TODO: open letter detail
-            },
-          ),
-        );
-      },
+        ),
+      ),
     );
   }
 }

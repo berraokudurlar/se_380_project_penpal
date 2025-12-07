@@ -1,16 +1,38 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:se_380_project_penpal/features/auth/register_screen.dart';
 import 'package:se_380_project_penpal/features/home/home_screen.dart';
+import 'package:lottie/lottie.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final emailController = TextEditingController();
-    final passwordController = TextEditingController();
+  State<LoginScreen> createState() => _LoginScreenState();
+}
 
+class _LoginScreenState extends State<LoginScreen> {
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+
+    // 🔥 Firebase Firestore test
+    FirebaseFirestore.instance.collection("test").add({
+      "timestamp": DateTime.now(),
+      "message": "Firebase is working!",
+    }).then((_) {
+      print("🔥 Firestore test document added successfully!");
+    }).catchError((e) {
+      print("❌ Firestore test error: $e");
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFFDF6E4),
       body: SafeArea(
@@ -19,7 +41,6 @@ class LoginScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-
               Center(
                 child: Container(
                   width: 120,
@@ -35,21 +56,19 @@ class LoginScreen extends StatelessWidget {
                       ),
                     ],
                   ),
-                  child: const Padding(
-                    padding: EdgeInsets.only(left: 8),
-                    child: Icon(
-                      FontAwesomeIcons.envelopeOpenText,
-                      color: Color(0xFF6B4423),
-                      size: 55,
+                  child: Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    child: Lottie.asset(
+                      'assets/images_animations/Paper Plane.json',
+                      fit: BoxFit.contain,
                     ),
                   ),
                 ),
               ),
               const SizedBox(height: 20),
 
-
               const Text(
-                'PenPal',
+                'KeyPal',
                 style: TextStyle(
                   fontSize: 70,
                   color: Color(0xFF6B4423),
@@ -59,7 +78,7 @@ class LoginScreen extends StatelessWidget {
               ),
               const SizedBox(height: 10),
               const Text(
-                'Write. Connect. Cherish.',
+                'New Connections. Old-fashioned.',
                 style: TextStyle(
                   fontSize: 16,
                   color: Color(0xFF8B5E3C),
@@ -67,7 +86,6 @@ class LoginScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 50),
-
 
               TextField(
                 controller: emailController,
@@ -87,7 +105,6 @@ class LoginScreen extends StatelessWidget {
               ),
               const SizedBox(height: 16),
 
-
               TextField(
                 controller: passwordController,
                 obscureText: true,
@@ -106,7 +123,6 @@ class LoginScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 30),
-
 
               SizedBox(
                 width: double.infinity,
@@ -136,7 +152,6 @@ class LoginScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 20),
-
 
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,

@@ -6,107 +6,148 @@ class FriendsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Sample data - replace with your actual data
     final friends = <Map<String, String>>[
-      {"name": "Alice", "status": "Online"},
-      {"name": "Ben", "status": "Offline"},
-      {"name": "Charlie", "status": "Busy"},
+      {"name": "Alice", "handle": "@alice_writes", "lastLetter": "2 days ago"},
+      {"name": "Ben", "handle": "@ben_letters", "lastLetter": "1 week ago"},
+      {"name": "Bahar", "handle": "@rugtbly", "lastLetter": "Yesterday"},
+      {"name": "Charlie", "handle": "@charlie_pen", "lastLetter": "3 days ago"},
+      {"name": "Chris", "handle": "@cxskisser69", "lastLetter": "Today"},
+      {"name": "Tom", "handle": "@t3baldi", "lastLetter": "5 days ago"},
     ];
+
+    // Group friends by first letter
+    final groupedFriends = <String, List<Map<String, String>>>{};
+    for (var friend in friends) {
+      final firstLetter = friend["name"]![0].toUpperCase();
+      groupedFriends.putIfAbsent(firstLetter, () => []).add(friend);
+    }
+
+    // Sort the keys alphabetically
+    final sortedKeys = groupedFriends.keys.toList()..sort();
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: ListView.separated(
-          itemCount: friends.length,
-          separatorBuilder: (_, __) => const SizedBox(height: 16),
-          itemBuilder: (context, index) {
-            final friend = friends[index];
+      body: SafeArea(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: ListView.builder(
+                padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                itemCount: sortedKeys.length,
+                itemBuilder: (context, index) {
+                  final letter = sortedKeys[index];
+                  final friendsInGroup = groupedFriends[letter]!;
 
-            return InkWell(
-              onTap: () {
-                // Navigate to friend profile or write letter
-              },
-              borderRadius: BorderRadius.circular(16),
-              child: Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(16),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.brown.withOpacity(0.2),
-                      blurRadius: 8,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
-                ),
-                child: Row(
-                  children: [
-                    Stack(
-                      children: [
-                        const CircleAvatar(
-                          radius: 28,
-                          child: Icon(Icons.person, color: AppColors.textDark),
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Letter divider
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 12.0),
+                        child: Row(
+                          children: [
+                            Text(
+                              letter,
+                              style: const TextStyle(
+                                fontFamily: 'Georgia',
+                                fontSize: 16,
+                                fontWeight: FontWeight.w300,
+                                color: AppColors.textMedium,
+                              ),
+                            ),
+                            const SizedBox(width: 16),
+                            Expanded(
+                              child: Container(
+                                height: 1,
+                                color: AppColors.textMedium.withOpacity(0.3),
+                              ),
+                            ),
+                          ],
                         ),
-                        // Status indicator
-                        Positioned(
-                          bottom: 0,
-                          right: 0,
-                          child: Container(
-                            width: 12,
-                            height: 12,
-                            decoration: BoxDecoration(
-                              color: friend["status"] == "Online"
-                                  ? Colors.green
-                                  : friend["status"] == "Busy"
-                                  ? Colors.orange
-                                  : Colors.grey,
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                  color: Colors.white, width: 2),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            friend["name"]!,
-                            style: const TextStyle(
-                              fontFamily: 'Georgia',
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: AppColors.textDark,
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            friend["status"]!,
-                            style: const TextStyle(
-                              fontFamily: 'Georgia',
-                              fontSize: 14,
-                              color: AppColors.textMedium,
-                            ),
-                          ),
-                        ],
                       ),
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.mail_outline,
-                          color: AppColors.textDark),
-                      onPressed: () {
-                        // TODO: navigate to write letter screen
-                      },
-                    ),
-                  ],
+                      // Friends in this group
+                      ...friendsInGroup.map((friend) => _buildFriendItem(context, friend)),
+                    ],
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFriendItem(BuildContext context, Map<String, String> friend) {
+    return InkWell(
+      onTap: () {
+        // Navigate to friend profile or write letter
+      },
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 12.0),
+        child: Row(
+          children: [
+            // Profile picture
+            CircleAvatar(
+              radius: 28,
+              backgroundColor: AppColors.textMedium.withOpacity(0.2),
+              child: Text(
+                friend["name"]![0].toUpperCase(),
+                style: const TextStyle(
+                  fontFamily: 'Georgia',
+                  fontSize: 20,
+                  color: AppColors.textDark,
+                  fontWeight: FontWeight.w300,
                 ),
               ),
-            );
-          },
+            ),
+            const SizedBox(width: 16),
+            // Name and info
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '${friend["name"]} ${friend["handle"]}',
+                    style: const TextStyle(
+                      fontFamily: 'Georgia',
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      color: AppColors.textDark,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Row(
+                    children: [
+                      const Icon(
+                        Icons.mail_outline,
+                        size: 14,
+                        color: AppColors.textMedium,
+                      ),
+                      const SizedBox(width: 6),
+                      Text(
+                        'Last letter: ${friend["lastLetter"]}',
+                        style: const TextStyle(
+                          fontFamily: 'Georgia',
+                          fontSize: 13,
+                          color: AppColors.textMedium,
+                          fontWeight: FontWeight.w300,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            // Arrow icon
+            const Icon(
+              Icons.arrow_forward,
+              color: AppColors.textMedium,
+              size: 20,
+            ),
+          ],
         ),
       ),
     );

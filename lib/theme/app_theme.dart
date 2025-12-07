@@ -10,7 +10,7 @@ class AppColors {
 }
 
 class AppTheme {
-  static ThemeData penpal = ThemeData(
+  static ThemeData keypal = ThemeData(
     brightness: Brightness.light,
 
     // Background
