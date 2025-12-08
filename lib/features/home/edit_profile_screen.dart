@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:se_380_project_penpal/theme/app_theme.dart';
 
+import 'home_screen.dart';
+
 class EditProfileScreen extends StatefulWidget {
   final String displayName;
   final String username;
@@ -10,6 +12,8 @@ class EditProfileScreen extends StatefulWidget {
   final String age;
   final List<String> interests;
   final List<Map<String, String>> languages;
+
+  final bool isFirstSetup;
 
   const EditProfileScreen({
     super.key,
@@ -21,6 +25,7 @@ class EditProfileScreen extends StatefulWidget {
     required this.age,
     required this.interests,
     required this.languages,
+    this.isFirstSetup = false,
   });
 
   @override
@@ -77,9 +82,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           icon: Icon(Icons.arrow_back, color: Colors.brown.shade800),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          'Edit Profile',
-          style: TextStyle(
+        title: Text(
+          widget.isFirstSetup ? 'Complete Profile' : 'Edit Profile',
+          style: const TextStyle(
             fontFamily: 'Georgia',
             fontSize: 24,
             color: AppColors.textDark,
@@ -93,7 +98,18 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             child: Material(
               color: Colors.transparent,
               child: InkWell(
-                onTap: _saveProfile,
+                onTap: () {
+                  _saveProfile();
+
+                  if (widget.isFirstSetup) {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const HomeScreen(),
+                      ),
+                    );
+                  }
+                },
                 borderRadius: BorderRadius.circular(12),
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -878,6 +894,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       ),
     );
 
-    Navigator.pop(context, updatedProfile);
+    if (!widget.isFirstSetup) {
+      Navigator.pop(context, updatedProfile);
+    }
   }
 }

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:se_380_project_penpal/features/home/home_screen.dart';
 
+import 'email_verification.dart';
+
 class RegisterScreen extends StatelessWidget {
   const RegisterScreen({super.key});
 
@@ -11,14 +13,18 @@ class RegisterScreen extends StatelessWidget {
     final passwordController = TextEditingController();
 
     return Scaffold(
-      appBar: AppBar(title: const Text("Become a Penpal")),
+      appBar: AppBar(title: const Text("Become a Keypal")),
       body: Padding(
         padding: const EdgeInsets.all(24.0),
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const Icon(Icons.local_post_office, size: 80, color: Color(0xFF3A5A40)),
+              SizedBox(height: MediaQuery.of(context).size.height * 0.15,),
+
+              Transform.translate(offset: const Offset(0, -30),
+              child: const Icon(Icons.local_post_office, size: 90, color: Color(0xFF6B4423)),
+              ),
               const SizedBox(height: 16),
               TextField(
                 controller: nameController,
@@ -40,7 +46,7 @@ class RegisterScreen extends StatelessWidget {
                 onPressed: () {
                   Navigator.pushReplacement(
                     context,
-                    MaterialPageRoute(builder: (_) => const HomeScreen()),
+                    MaterialPageRoute(builder: (_) => const EmailVerificationScreen()),
                   );
                 },
                 child: const Text("Sign Up"),

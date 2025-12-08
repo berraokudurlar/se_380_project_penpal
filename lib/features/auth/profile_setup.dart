@@ -4,10 +4,16 @@ import 'package:se_380_project_penpal/features/home/home_screen.dart';
 class ProfileSetupScreen extends StatelessWidget {
   const ProfileSetupScreen({super.key});
 
+
+
   @override
   Widget build(BuildContext context) {
     final countryController = TextEditingController();
     final bioController = TextEditingController();
+    final displayNameController = TextEditingController();
+    final ageController = TextEditingController();
+    final interestsController = TextEditingController();
+    final languageController = TextEditingController();
 
     return Scaffold(
       appBar: AppBar(title: const Text("Set Up Your Profile")),
@@ -16,7 +22,7 @@ class ProfileSetupScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const Icon(Icons.person, size: 80, color: Color(0xFF3A5A40)),
+            const Icon(Icons.person, size: 90, color: Color(0xFF6B4423)),
             const SizedBox(height: 16),
             TextField(
               controller: countryController,
