@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:se_380_project_penpal/features/home/profile/profile_screen.dart';
 import 'package:se_380_project_penpal/theme/app_theme.dart';
-
-import 'home_screen.dart';
 
 class EditProfileScreen extends StatefulWidget {
   final String displayName;
@@ -105,7 +104,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
-                        builder: (_) => const HomeScreen(),
+                        builder: (_) => const ProfileScreen(),
                       ),
                     );
                   }

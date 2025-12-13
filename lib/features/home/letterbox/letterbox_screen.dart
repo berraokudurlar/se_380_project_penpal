@@ -14,6 +14,21 @@ class _LetterboxScreenState extends State<LetterboxScreen> {
   int _currentPage = 0;
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Precache images to avoid loading delays
+    // Use didChangeDependencies instead of initState because we need context
+    precacheImage(
+      const AssetImage('assets/images_animations/background.png'),
+      context,
+    );
+    precacheImage(
+      const AssetImage('assets/images_animations/delphinum backeri stamp.png'),
+      context,
+    );
+  }
+
+  @override
   void dispose() {
     _pageController.dispose();
     super.dispose();
@@ -116,11 +131,15 @@ class _LetterboxScreenState extends State<LetterboxScreen> {
             child: Container(
               width: constraints.maxWidth * 0.95,
               height: constraints.maxHeight * 0.9,
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 image: DecorationImage(
-                  image: AssetImage('assets/images_animations/background.png'),
+                  image: const AssetImage('assets/images_animations/background.png'),
                   fit: BoxFit.cover,
+                  // Add cache settings for better performance
+                  filterQuality: FilterQuality.medium,
                 ),
+                // Add a background color as fallback while image loads
+                color: Colors.grey.shade50,
               ),
               child: SingleChildScrollView(
                 padding: const EdgeInsets.all(32),
@@ -158,12 +177,25 @@ class _LetterboxScreenState extends State<LetterboxScreen> {
                           ),
                         ),
                         const SizedBox(width: 12),
-                        // Decorative stamp
+                        // Decorative stamp with frameBuilder to handle loading
                         Image.asset(
                           'assets/images_animations/delphinum backeri stamp.png',
                           width: 100,
                           height: 100,
                           fit: BoxFit.cover,
+                          cacheWidth: 200, // Cache at 2x resolution for performance
+                          frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
+                            if (wasSynchronouslyLoaded) {
+                              return child;
+                            }
+                            // Show a fade-in animation as the image loads
+                            return AnimatedOpacity(
+                              opacity: frame == null ? 0 : 1,
+                              duration: const Duration(milliseconds: 300),
+                              curve: Curves.easeOut,
+                              child: child,
+                            );
+                          },
                           errorBuilder: (context, error, stackTrace) {
                             return Icon(
                               Icons.mail,

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:se_380_project_penpal/features/auth/profile_setup.dart';
 
-import '../home/edit_profile_screen.dart';
+import '../home/profile/edit_profile_screen.dart';
 
 class EmailVerificationScreen extends StatelessWidget {
   const EmailVerificationScreen({super.key});

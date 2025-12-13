@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:se_380_project_penpal/features/auth/login_screen.dart';
-import 'package:se_380_project_penpal/features/home/letterbox_screen.dart';
-import 'package:se_380_project_penpal/features/home/friends_screen.dart';
-import 'package:se_380_project_penpal/features/home/write_letter_screen.dart';
-import 'package:se_380_project_penpal/features/home/profile_screen.dart';
+import 'package:se_380_project_penpal/features/home/letterbox/letterbox_screen.dart';
+import 'package:se_380_project_penpal/features/home/friends/keypals_screen.dart';
+import 'package:se_380_project_penpal/features/home/letters/write_letter_screen.dart';
+import 'package:se_380_project_penpal/features/home/profile/profile_screen.dart';
 import 'package:se_380_project_penpal/features/home/settings_screen.dart';
 import 'package:se_380_project_penpal/theme/app_theme.dart';
 

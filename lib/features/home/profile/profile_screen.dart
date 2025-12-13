@@ -342,7 +342,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             child: _buildStatItem(
               Icons.people_outline,
               "15",
-              "Pen Pals",
+              "Key Pals",
             ),
           ),
         ],
@@ -594,13 +594,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
           ),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-            decoration: _paperDecoration(),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.8),
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(color: Colors.brown.shade300),
+            ),
             child: Text(
               level,
               style: TextStyle(
                 fontFamily: 'Georgia',
                 fontSize: 12,
+                fontWeight: FontWeight.w600,
                 color: Colors.brown.shade800,
               ),
             ),
@@ -621,21 +626,4 @@ class _ProfileScreenState extends State<ProfileScreen> {
         return Colors.grey;
     }
   }
-}
-
-BoxDecoration _paperDecoration() {
-  return BoxDecoration(
-    borderRadius: BorderRadius.circular(20),
-    image: const DecorationImage(
-      image: AssetImage("assets/images_animations/pinned_paper.png"),
-      fit: BoxFit.cover,
-    ),
-    boxShadow: [
-      BoxShadow(
-        color: Colors.black.withOpacity(0.10),
-        blurRadius: 12,
-        offset: const Offset(0, 6),
-      ),
-    ],
-  );
 }
