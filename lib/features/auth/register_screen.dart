@@ -54,7 +54,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           "username": email.split('@').first, // temporary username
           "displayName": name,
           "email": email,
-          "isVerified": user.emailVerified,
+          "isVerified": false,
           "createdAt": Timestamp.now(),
         });
 
