@@ -4,6 +4,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:se_380_project_penpal/features/auth/register_screen.dart';
 import 'package:se_380_project_penpal/features/home/home_screen.dart';
 import 'package:lottie/lottie.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'email_verification.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -13,24 +15,89 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final emailController = TextEditingController();
-  final passwordController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
 
-  @override
-  void initState() {
-    super.initState();
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  bool isLoading = false;
 
-    // 🔥 Firebase Firestore test
-    FirebaseFirestore.instance.collection("test").add({
-      "timestamp": DateTime.now(),
-      "message": "Firebase is working!",
-    }).then((_) {
-      print("🔥 Firestore test document added successfully!");
-    }).catchError((e) {
-      print("❌ Firestore test error: $e");
+  Future<void> login() async {
+    final email = emailController.text.trim();
+    final password = passwordController.text;
+
+
+    if (email.isEmpty || password.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Please enter email and password")),
+      );
+      return;
+    }
+
+    setState(() {
+      isLoading = true;
     });
+
+    try {
+      final UserCredential credential =
+      await _auth.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+
+      final user = credential.user;
+      if (user == null) {
+        throw Exception("Login failed");
+      }
+
+      await user.reload();
+      final refreshedUser = FirebaseAuth.instance.currentUser;
+
+      if (!mounted) return;
+
+      if (refreshedUser != null && refreshedUser.emailVerified) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const HomeScreen()),
+        );
+      } else {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const EmailVerificationScreen()),
+        );
+      }
+    } on FirebaseAuthException catch (e) {
+      String message = "Login failed";
+
+      if (e.code == 'user-not-found') {
+        message = "No user found with this email";
+      } else if (e.code == 'wrong-password') {
+        message = "Incorrect password";
+      } else if (e.code == 'invalid-email') {
+        message = "Invalid email address";
+      }
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(message)),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Unexpected error: $e")),
+      );
+    } finally {
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
+    }
   }
 
+  @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -135,13 +202,14 @@ class _LoginScreenState extends State<LoginScreen> {
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  onPressed: () {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (_) => const HomeScreen()),
-                    );
-                  },
-                  child: const Text(
+                  onPressed: isLoading ? null : login,
+                  child: isLoading
+                      ? const SizedBox(
+                    height: 20,
+                    width: 20,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                      : const Text(
                     "Log in",
                     style: TextStyle(
                       fontSize: 18,
