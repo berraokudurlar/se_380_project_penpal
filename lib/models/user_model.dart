@@ -5,12 +5,14 @@ part 'user_model.g.dart';
 @freezed
 class UserModel with _$UserModel {
   const factory UserModel({
-    required String userId,
-    required String username, // unique handle
-    required String displayName,
+    required String userId,    // Firebase UID
+    required String username, // unique handle (uygulama içi)
+    required String displayName,    //uyugulama içi gösterilen isim
     required String email,
-    String? phone,
-    required String passwordHash,
+
+
+
+
 
     String? country,
     bool? isCountryPublic,

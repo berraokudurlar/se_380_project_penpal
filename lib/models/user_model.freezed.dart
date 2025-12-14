@@ -25,8 +25,6 @@ mixin _$UserModel {
   String get username => throw _privateConstructorUsedError; // unique handle
   String get displayName => throw _privateConstructorUsedError;
   String get email => throw _privateConstructorUsedError;
-  String? get phone => throw _privateConstructorUsedError;
-  String get passwordHash => throw _privateConstructorUsedError;
   String? get country => throw _privateConstructorUsedError;
   bool? get isCountryPublic => throw _privateConstructorUsedError;
   int? get age => throw _privateConstructorUsedError;
@@ -67,8 +65,6 @@ abstract class $UserModelCopyWith<$Res> {
     String username,
     String displayName,
     String email,
-    String? phone,
-    String passwordHash,
     String? country,
     bool? isCountryPublic,
     int? age,
@@ -109,8 +105,6 @@ class _$UserModelCopyWithImpl<$Res, $Val extends UserModel>
     Object? username = null,
     Object? displayName = null,
     Object? email = null,
-    Object? phone = freezed,
-    Object? passwordHash = null,
     Object? country = freezed,
     Object? isCountryPublic = freezed,
     Object? age = freezed,
@@ -147,14 +141,6 @@ class _$UserModelCopyWithImpl<$Res, $Val extends UserModel>
             email: null == email
                 ? _value.email
                 : email // ignore: cast_nullable_to_non_nullable
-                      as String,
-            phone: freezed == phone
-                ? _value.phone
-                : phone // ignore: cast_nullable_to_non_nullable
-                      as String?,
-            passwordHash: null == passwordHash
-                ? _value.passwordHash
-                : passwordHash // ignore: cast_nullable_to_non_nullable
                       as String,
             country: freezed == country
                 ? _value.country
@@ -248,8 +234,6 @@ abstract class _$$UserModelImplCopyWith<$Res>
     String username,
     String displayName,
     String email,
-    String? phone,
-    String passwordHash,
     String? country,
     bool? isCountryPublic,
     int? age,
@@ -289,8 +273,6 @@ class __$$UserModelImplCopyWithImpl<$Res>
     Object? username = null,
     Object? displayName = null,
     Object? email = null,
-    Object? phone = freezed,
-    Object? passwordHash = null,
     Object? country = freezed,
     Object? isCountryPublic = freezed,
     Object? age = freezed,
@@ -327,14 +309,6 @@ class __$$UserModelImplCopyWithImpl<$Res>
         email: null == email
             ? _value.email
             : email // ignore: cast_nullable_to_non_nullable
-                  as String,
-        phone: freezed == phone
-            ? _value.phone
-            : phone // ignore: cast_nullable_to_non_nullable
-                  as String?,
-        passwordHash: null == passwordHash
-            ? _value.passwordHash
-            : passwordHash // ignore: cast_nullable_to_non_nullable
                   as String,
         country: freezed == country
             ? _value.country
@@ -421,8 +395,6 @@ class _$UserModelImpl implements _UserModel {
     required this.username,
     required this.displayName,
     required this.email,
-    this.phone,
-    required this.passwordHash,
     this.country,
     this.isCountryPublic,
     this.age,
@@ -462,10 +434,6 @@ class _$UserModelImpl implements _UserModel {
   final String displayName;
   @override
   final String email;
-  @override
-  final String? phone;
-  @override
-  final String passwordHash;
   @override
   final String? country;
   @override
@@ -570,7 +538,7 @@ class _$UserModelImpl implements _UserModel {
 
   @override
   String toString() {
-    return 'UserModel(userId: $userId, username: $username, displayName: $displayName, email: $email, phone: $phone, passwordHash: $passwordHash, country: $country, isCountryPublic: $isCountryPublic, age: $age, isAgePublic: $isAgePublic, address: $address, bio: $bio, languages: $languages, interests: $interests, profilePictureUrl: $profilePictureUrl, friends: $friends, blockedUsers: $blockedUsers, lettersSent: $lettersSent, lettersReceived: $lettersReceived, purchases: $purchases, badges: $badges, lastActive: $lastActive, isVerified: $isVerified, themePreference: $themePreference)';
+    return 'UserModel(userId: $userId, username: $username, displayName: $displayName, email: $email, country: $country, isCountryPublic: $isCountryPublic, age: $age, isAgePublic: $isAgePublic, address: $address, bio: $bio, languages: $languages, interests: $interests, profilePictureUrl: $profilePictureUrl, friends: $friends, blockedUsers: $blockedUsers, lettersSent: $lettersSent, lettersReceived: $lettersReceived, purchases: $purchases, badges: $badges, lastActive: $lastActive, isVerified: $isVerified, themePreference: $themePreference)';
   }
 
   @override
@@ -584,9 +552,6 @@ class _$UserModelImpl implements _UserModel {
             (identical(other.displayName, displayName) ||
                 other.displayName == displayName) &&
             (identical(other.email, email) || other.email == email) &&
-            (identical(other.phone, phone) || other.phone == phone) &&
-            (identical(other.passwordHash, passwordHash) ||
-                other.passwordHash == passwordHash) &&
             (identical(other.country, country) || other.country == country) &&
             (identical(other.isCountryPublic, isCountryPublic) ||
                 other.isCountryPublic == isCountryPublic) &&
@@ -639,8 +604,6 @@ class _$UserModelImpl implements _UserModel {
     username,
     displayName,
     email,
-    phone,
-    passwordHash,
     country,
     isCountryPublic,
     age,
@@ -681,8 +644,6 @@ abstract class _UserModel implements UserModel {
     required final String username,
     required final String displayName,
     required final String email,
-    final String? phone,
-    required final String passwordHash,
     final String? country,
     final bool? isCountryPublic,
     final int? age,
@@ -714,10 +675,6 @@ abstract class _UserModel implements UserModel {
   String get displayName;
   @override
   String get email;
-  @override
-  String? get phone;
-  @override
-  String get passwordHash;
   @override
   String? get country;
   @override
