@@ -10,7 +10,8 @@ class UserModel with _$UserModel {
     required String displayName,    //uyugulama içi gösterilen isim
     required String email,
 
-
+    DateTime? lastActive,
+    bool? isVerified,
 
 
 
@@ -34,8 +35,8 @@ class UserModel with _$UserModel {
     List<String>? purchases,
     List<String>? badges,
 
-    DateTime? lastActive,
-    bool? isVerified,
+
+
     String? themePreference, // "light" | "dark" | "system"
 
   }) = _UserModel;

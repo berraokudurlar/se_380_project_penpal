@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+import '../../models/user_model.dart';
 import 'email_verification.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -46,7 +47,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         await user.sendEmailVerification();
 
         //  Create user profile in Firestore
-        await FirebaseFirestore.instance
+        /*await FirebaseFirestore.instance
             .collection('users')
             .doc(user.uid)
             .set({
@@ -56,7 +57,19 @@ class _RegisterScreenState extends State<RegisterScreen> {
           "email": email,
           "isVerified": false,
           "createdAt": Timestamp.now(),
-        });
+        });*/
+        final userModel = UserModel(
+          userId: user.uid,
+          username: email.split('@').first, // temporary username
+          displayName: name,
+          email: email,
+          isVerified: false,
+          lastActive: DateTime.now(),
+        );
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .set(userModel.toJson());
 
         if (!mounted) return;
         Navigator.pushReplacement(
