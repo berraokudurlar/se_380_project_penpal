@@ -125,28 +125,38 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(24.0),
-        child: Transform.translate(
-          offset: const Offset(0, -40),
+        child: Center(
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(
-                Icons.mark_email_unread,
-                size: 90,
-                color: Color(0xFF6B4423),
+              const Spacer(flex: 1),
+              Container(
+                decoration: const BoxDecoration(
+                  boxShadow: [
+                    BoxShadow(
+                      color: Color(0x33000000),
+                      blurRadius: 22,
+                      spreadRadius: 2,
+                      offset: Offset(0, 8),
+                    ),
+                  ],
+                ),
+                child: const Icon(
+                  Icons.mark_email_unread,
+                  size: 90,
+                  color: const Color(0xFF6B4423),
+                ),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 30),
 
               const Text(
-                "We’ve sent a verification link to your email address.\n"
-                    "Please verify your email before continuing.",
+                "We sent you a verification link.\nCheck your email to continue",
                 textAlign: TextAlign.center,
               ),
 
-              const SizedBox(height: 24),
+              const SizedBox(height: 30),
 
               SizedBox(
-                width: double.infinity,
+                width: MediaQuery.of(context).size.width * 0.7,
                 child: ElevatedButton(
                   onPressed: isChecking ? null : checkVerification,
                   child: isChecking
@@ -171,6 +181,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                 )
                     : const Text("Resend verification email"),
               ),
+              const Spacer(flex: 2),
             ],
           ),
         ),

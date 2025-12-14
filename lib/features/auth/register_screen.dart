@@ -96,6 +96,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   @override
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -110,17 +111,32 @@ class _RegisterScreenState extends State<RegisterScreen> {
               SizedBox(
                 height: MediaQuery.of(context).size.height * 0.15,
               ),
-
-              Transform.translate(
-                offset: const Offset(0, -30),
-                child: const Icon(
-                  Icons.local_post_office,
-                  size: 90,
-                  color: Color(0xFF6B4423),
+              Align(
+                alignment: Alignment.center,
+                child: SizedBox(
+                  width: 100,
+                  height: 100,
+                  child: Container(
+                    decoration: const BoxDecoration(
+                      boxShadow: [
+                        BoxShadow(
+                          color: Color(0x22000000),
+                          blurRadius: 26,
+                          spreadRadius: 1,
+                          offset: Offset(0, 8),
+                        ),
+                      ],
+                    ),
+                    child: const Icon(
+                      Icons.local_post_office,
+                      size: 90,
+                      color: Color(0xFF6B4423),
+                    ),
+                  ),
                 ),
               ),
 
-              const SizedBox(height: 16),
+              const SizedBox(height: 20),
 
               TextField(
                 controller: nameController,
@@ -161,4 +177,5 @@ class _RegisterScreenState extends State<RegisterScreen> {
       ),
     );
   }
+
 }
