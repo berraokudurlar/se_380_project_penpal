@@ -19,6 +19,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
+  bool isSigningUp = false;
+
   Future<void> signUp() async {
     final name = nameController.text.trim();
     final email = emailController.text.trim();
@@ -31,6 +33,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
       );
       return;
     }
+
+    setState(() {
+      isSigningUp=true;
+    });
 
     try {
       // Create user with Firebase Auth
@@ -46,18 +52,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
         await user.sendEmailVerification();
 
-        //  Create user profile in Firestore
-        /*await FirebaseFirestore.instance
-            .collection('users')
-            .doc(user.uid)
-            .set({
-          "userId": user.uid,
-          "username": email.split('@').first, // temporary username
-          "displayName": name,
-          "email": email,
-          "isVerified": false,
-          "createdAt": Timestamp.now(),
-        });*/
         final userModel = UserModel(
           userId: user.uid,
           username: email.split('@').first, // temporary username
@@ -97,6 +91,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Unexpected error: $e")),
       );
+    }finally {
+      if (mounted) {
+        setState(() {
+          isSigningUp=false;
+        });
+      }
     }
   }
 
@@ -108,7 +108,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     super.dispose();
   }
 
-  @override
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -181,8 +181,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
               const SizedBox(height: 24),
 
               ElevatedButton(
-                onPressed: signUp,
-                child: const Text("Sign Up"),
+                onPressed: isSigningUp ? null : signUp,
+                child: isSigningUp
+                    ? const SizedBox(
+                  height: 20,
+                  width: 20,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: Colors.white,
+                  ),
+                )
+                    : const Text("Sign Up"),
               ),
             ],
           ),
