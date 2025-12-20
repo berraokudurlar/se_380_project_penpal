@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:se_380_project_penpal/theme/app_theme.dart';
 import 'edit_profile_screen.dart';
+import '../../../models/user_model.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -10,22 +14,93 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  // Profile data that can be updated
-  String displayName = "Display Name";
-  String username = "username";
-  String bio = "This is the user's bio. It can be a few lines describing the user, their interests, or anything they want to share with their pen pals.";
-  String status = "Online";
+  bool isLoading = true;
+
+  String displayName = "";
+  String username = "";
+  String bio = "";
+  String status = "Offline";
   String country = "Hidden";
   String age = "Hidden";
-  List<String> interests = ["Reading", "Music", "Coding", "Photography", "Traveling", "Cooking", "Gaming"];
-  List<Map<String, String>> languages = [
-    {"language": "English", "level": "Fluent"},
-    {"language": "Turkish", "level": "Intermediate"},
-    {"language": "Spanish", "level": "Beginner"},
-  ];
+
+  List<String> interests = [];
+  List<Map<String, String>> languages = [];
+
+  int sentCount = 0;
+  int receivedCount = 0;
+  int friendsCount = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserFromFirestore();
+  }
+
+  Future<void> _loadUserFromFirestore() async {
+    try {
+      final currentUser = FirebaseAuth.instance.currentUser;
+      if (currentUser == null) {
+        setState(() => isLoading = false);
+        return;
+      }
+
+      final doc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(currentUser.uid)
+          .get();
+
+      if (!doc.exists) {
+        setState(() => isLoading = false);
+        return;
+      }
+
+      final model = UserModel.fromJson(doc.data()!);
+
+      setState(() {
+        displayName = model.displayName;
+        username = model.username;
+        bio = model.bio ?? "";
+
+        country = (model.isCountryPublic ?? false)
+            ? (model.country ?? "Unknown")
+            : "Hidden";
+
+        age = (model.isAgePublic ?? false && model.age != null)
+            ? model.age.toString()
+            : "Hidden";
+
+        interests = model.interests ?? [];
+
+        languages = (model.languages ?? [])
+            .map((lang) => {
+          "language": lang,
+          "level": "",
+        })
+            .toList();
+
+        sentCount = model.lettersSent?.length ?? 0;
+        receivedCount = model.lettersReceived?.length ?? 0;
+        friendsCount = model.friends?.length ?? 0;
+
+        status = "Online";
+        isLoading = false;
+      });
+    } catch (e) {
+      debugPrint("Profile load error: $e");
+      setState(() => isLoading = false);
+    }
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
+    if (isLoading) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: CustomScrollView(
@@ -33,8 +108,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
         slivers: [
           SliverAppBar(
             expandedHeight: 80,
-            floating: false,
-            pinned: false,
             backgroundColor: Theme.of(context).scaffoldBackgroundColor,
             elevation: 0,
             automaticallyImplyLeading: false,
@@ -45,7 +118,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   color: Colors.transparent,
                   child: InkWell(
                     onTap: () async {
-                      // Navigate to edit screen and wait for result
                       final result = await Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -62,8 +134,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                       );
 
-                      // Update profile if data was returned
-                      if (result != null && result is Map<String, dynamic>) {
+                      if (result != null) {
                         setState(() {
                           displayName = result['displayName'] ?? displayName;
                           username = result['username'] ?? username;
@@ -71,16 +142,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           status = result['status'] ?? status;
                           country = result['country'] ?? country;
                           age = result['age'] ?? age;
-                          interests = List<String>.from(result['interests'] ?? interests);
+                          interests =
+                          List<String>.from(result['interests'] ?? interests);
                           languages = List<Map<String, String>>.from(
-                            (result['languages'] as List).map((lang) => Map<String, String>.from(lang)),
+                            (result['languages'] as List)
+                                .map((e) => Map<String, String>.from(e)),
                           );
                         });
                       }
                     },
                     borderRadius: BorderRadius.circular(12),
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
                           colors: [
@@ -99,14 +173,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
-                        children: [
+                        children: const [
                           Icon(
                             Icons.edit,
                             color: Colors.white,
                             size: 18,
                           ),
-                          const SizedBox(width: 6),
-                          const Text(
+                          SizedBox(width: 6),
+                          Text(
                             'Edit',
                             style: TextStyle(
                               fontFamily: 'Georgia',
@@ -317,7 +391,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           Expanded(
             child: _buildStatItem(
               Icons.send_outlined,
-              "42",
+              sentCount.toString(),
               "Sent",
             ),
           ),
@@ -329,7 +403,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           Expanded(
             child: _buildStatItem(
               Icons.mail_outline,
-              "38",
+              receivedCount.toString(),
               "Received",
             ),
           ),
@@ -341,7 +415,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           Expanded(
             child: _buildStatItem(
               Icons.people_outline,
-              "15",
+              friendsCount.toString(),
               "Key Pals",
             ),
           ),
@@ -573,7 +647,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  Widget _buildLanguageChip(String language, String level, Color color) {
+  Widget _buildLanguageChip(
+      String language,
+      String level,
+      Color color,
+      ) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
@@ -582,34 +660,42 @@ class _ProfileScreenState extends State<ProfileScreen> {
         border: Border.all(color: Colors.brown.shade200),
       ),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            language,
-            style: const TextStyle(
-              fontFamily: 'Georgia',
-              fontSize: 15,
-              fontWeight: FontWeight.bold,
-              color: Colors.black87,
-            ),
-          ),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.8),
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: Colors.brown.shade300),
-            ),
+          // Language text (overflow-safe)
+          Expanded(
             child: Text(
-              level,
-              style: TextStyle(
+              language,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(
                 fontFamily: 'Georgia',
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-                color: Colors.brown.shade800,
+                fontSize: 15,
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
               ),
             ),
           ),
+
+          if (level.isNotEmpty) ...[
+            const SizedBox(width: 8),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.85),
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(color: Colors.brown.shade300),
+              ),
+              child: Text(
+                level,
+                style: TextStyle(
+                  fontFamily: 'Georgia',
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.brown.shade800,
+                ),
+              ),
+            ),
+          ],
         ],
       ),
     );

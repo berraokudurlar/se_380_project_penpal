@@ -921,7 +921,17 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           MaterialPageRoute(builder: (_) => const HomeScreen()),
         );
       } else {
-        Navigator.pop(context);
+        Navigator.pop(context, {
+          'displayName': updatedUser.displayName,
+          'username': updatedUser.username,
+          'bio': updatedUser.bio,
+          'status': _status,
+          'country': updatedUser.country,
+          'age': updatedUser.age?.toString() ?? "Hidden",
+          'interests': updatedUser.interests,
+          'languages': _languages,
+        });
+
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
