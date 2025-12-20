@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:se_380_project_penpal/features/home/home_screen.dart';
 import 'package:se_380_project_penpal/features/home/profile/profile_screen.dart';
 import 'package:se_380_project_penpal/theme/app_theme.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:se_380_project_penpal/models/user_model.dart';
+
 
 class EditProfileScreen extends StatefulWidget {
   final String displayName;
@@ -44,6 +48,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   late List<Map<String, String>> _languages;
 
   String _newInterest = "";
+  bool isSaving = false;
 
   @override
   void initState() {
@@ -98,21 +103,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             child: Material(
               color: Colors.transparent,
               child: InkWell(
-                onTap: () {
-                  _saveProfile();
-
-                  if (widget.isFirstSetup) {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => const HomeScreen(),
-                      ),
-                    );
-                  }
-                },
+                onTap: isSaving ? null : _saveProfile,
                 borderRadius: BorderRadius.circular(12),
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  padding:
+                  const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: [
@@ -121,18 +116,21 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       ],
                     ),
                     borderRadius: BorderRadius.circular(12),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.brown.withOpacity(0.3),
-                        blurRadius: 8,
-                        offset: const Offset(0, 3),
-                      ),
-                    ],
                   ),
-                  child: Row(
+                  child: isSaving
+                      ? const SizedBox(
+                    height: 18,
+                    width: 18,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: Colors.white,
+                    ),
+                  )
+                      : Row(
                     mainAxisSize: MainAxisSize.min,
                     children: const [
-                      Icon(Icons.check, color: Colors.white, size: 18),
+                      Icon(Icons.check,
+                          color: Colors.white, size: 18),
                       SizedBox(width: 6),
                       Text(
                         'Save',
@@ -871,31 +869,69 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     );
   }
 
-  void _saveProfile() {
-    // Return updated data to profile screen
-    final updatedProfile = {
-      'displayName': _displayNameController.text,
-      'username': _usernameController.text,
-      'bio': _bioController.text,
-      'status': _status,
-      'country': _countryController.text,
-      'age': _ageController.text,
-      'interests': _interests,
-      'languages': _languages,
-    };
+  Future<void> _saveProfile() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
 
-    // TODO: Save to Firestore/backend here
+    setState(() => isSaving = true);
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: const Text("Profile updated! ✨"),
-        backgroundColor: Colors.green.shade700,
-        behavior: SnackBarBehavior.floating,
-      ),
-    );
+    try {
+      final doc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .get();
 
-    if (!widget.isFirstSetup) {
-      Navigator.pop(context, updatedProfile);
+      if (!doc.exists) {
+        throw Exception("User document not found");
+      }
+
+      final currentUser = UserModel.fromJson(doc.data()!);
+
+      final updatedUser = currentUser.copyWith(
+        displayName: _displayNameController.text.trim(),
+        username: _usernameController.text.trim(),
+        bio: _bioController.text.trim(),
+        country: _countryController.text.trim(),
+        age: int.tryParse(_ageController.text),
+        interests: _interests,
+        languages: _languages
+            .map((e) => "${e['language']} (${e['level']})")
+            .toList(),
+        lastActive: DateTime.now(),
+      );
+
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .update(updatedUser.toJson());
+
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text("Profile saved successfully ✨"),
+          backgroundColor: Colors.green.shade700,
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+
+      if (widget.isFirstSetup) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const HomeScreen()),
+        );
+      } else {
+        Navigator.pop(context);
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Failed to save profile: $e"),
+          backgroundColor: Colors.red.shade700,
+        ),
+      );
+    } finally {
+      if (mounted) setState(() => isSaving = false);
     }
   }
 }
