@@ -924,9 +924,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         country: _countryController.text.trim(),
         age: int.tryParse(_ageController.text),
         interests: _interests,
-        languages: _languages
-            .map((e) => "${e['language']} (${e['level']})")
-            .toList(),
+        languages: _languages,
         lastActive: DateTime.now(),
       );
 

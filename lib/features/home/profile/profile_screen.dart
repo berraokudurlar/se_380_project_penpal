@@ -71,13 +71,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
         interests = model.interests ?? [];
 
-        languages = (model.languages ?? [])
-            .map((lang) => {
-          "language": lang,
-          "level": "",
-        })
-            .toList();
-
+        languages = model.languages ?? [];
         sentCount = model.lettersSent?.length ?? 0;
         receivedCount = model.lettersReceived?.length ?? 0;
         friendsCount = model.friends?.length ?? 0;

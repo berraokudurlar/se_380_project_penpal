@@ -21,10 +21,14 @@ UserModel _$UserModelFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$UserModel {
-  String get userId => throw _privateConstructorUsedError;
-  String get username => throw _privateConstructorUsedError; // unique handle
-  String get displayName => throw _privateConstructorUsedError;
+  String get userId => throw _privateConstructorUsedError; // Firebase UID
+  String get username =>
+      throw _privateConstructorUsedError; // unique handle (uygulama içi)
+  String get displayName =>
+      throw _privateConstructorUsedError; //uyugulama içi gösterilen isim
   String get email => throw _privateConstructorUsedError;
+  DateTime? get lastActive => throw _privateConstructorUsedError;
+  bool? get isVerified => throw _privateConstructorUsedError;
   String? get country => throw _privateConstructorUsedError;
   bool? get isCountryPublic => throw _privateConstructorUsedError;
   int? get age => throw _privateConstructorUsedError;
@@ -32,17 +36,14 @@ mixin _$UserModel {
   String? get address =>
       throw _privateConstructorUsedError; // store only if necessary and encrypt
   String? get bio => throw _privateConstructorUsedError;
-  List<String>? get languages => throw _privateConstructorUsedError;
+  List<Map<String, String>>? get languages =>
+      throw _privateConstructorUsedError;
   List<String>? get interests => throw _privateConstructorUsedError;
   String? get profilePictureUrl => throw _privateConstructorUsedError;
   List<String>? get friends => throw _privateConstructorUsedError;
   List<String>? get blockedUsers => throw _privateConstructorUsedError;
   List<String>? get lettersSent => throw _privateConstructorUsedError;
   List<String>? get lettersReceived => throw _privateConstructorUsedError;
-  List<String>? get purchases => throw _privateConstructorUsedError;
-  List<String>? get badges => throw _privateConstructorUsedError;
-  DateTime? get lastActive => throw _privateConstructorUsedError;
-  bool? get isVerified => throw _privateConstructorUsedError;
   String? get themePreference => throw _privateConstructorUsedError;
 
   /// Serializes this UserModel to a JSON map.
@@ -65,23 +66,21 @@ abstract class $UserModelCopyWith<$Res> {
     String username,
     String displayName,
     String email,
+    DateTime? lastActive,
+    bool? isVerified,
     String? country,
     bool? isCountryPublic,
     int? age,
     bool? isAgePublic,
     String? address,
     String? bio,
-    List<String>? languages,
+    List<Map<String, String>>? languages,
     List<String>? interests,
     String? profilePictureUrl,
     List<String>? friends,
     List<String>? blockedUsers,
     List<String>? lettersSent,
     List<String>? lettersReceived,
-    List<String>? purchases,
-    List<String>? badges,
-    DateTime? lastActive,
-    bool? isVerified,
     String? themePreference,
   });
 }
@@ -105,6 +104,8 @@ class _$UserModelCopyWithImpl<$Res, $Val extends UserModel>
     Object? username = null,
     Object? displayName = null,
     Object? email = null,
+    Object? lastActive = freezed,
+    Object? isVerified = freezed,
     Object? country = freezed,
     Object? isCountryPublic = freezed,
     Object? age = freezed,
@@ -118,10 +119,6 @@ class _$UserModelCopyWithImpl<$Res, $Val extends UserModel>
     Object? blockedUsers = freezed,
     Object? lettersSent = freezed,
     Object? lettersReceived = freezed,
-    Object? purchases = freezed,
-    Object? badges = freezed,
-    Object? lastActive = freezed,
-    Object? isVerified = freezed,
     Object? themePreference = freezed,
   }) {
     return _then(
@@ -142,6 +139,14 @@ class _$UserModelCopyWithImpl<$Res, $Val extends UserModel>
                 ? _value.email
                 : email // ignore: cast_nullable_to_non_nullable
                       as String,
+            lastActive: freezed == lastActive
+                ? _value.lastActive
+                : lastActive // ignore: cast_nullable_to_non_nullable
+                      as DateTime?,
+            isVerified: freezed == isVerified
+                ? _value.isVerified
+                : isVerified // ignore: cast_nullable_to_non_nullable
+                      as bool?,
             country: freezed == country
                 ? _value.country
                 : country // ignore: cast_nullable_to_non_nullable
@@ -169,7 +174,7 @@ class _$UserModelCopyWithImpl<$Res, $Val extends UserModel>
             languages: freezed == languages
                 ? _value.languages
                 : languages // ignore: cast_nullable_to_non_nullable
-                      as List<String>?,
+                      as List<Map<String, String>>?,
             interests: freezed == interests
                 ? _value.interests
                 : interests // ignore: cast_nullable_to_non_nullable
@@ -194,22 +199,6 @@ class _$UserModelCopyWithImpl<$Res, $Val extends UserModel>
                 ? _value.lettersReceived
                 : lettersReceived // ignore: cast_nullable_to_non_nullable
                       as List<String>?,
-            purchases: freezed == purchases
-                ? _value.purchases
-                : purchases // ignore: cast_nullable_to_non_nullable
-                      as List<String>?,
-            badges: freezed == badges
-                ? _value.badges
-                : badges // ignore: cast_nullable_to_non_nullable
-                      as List<String>?,
-            lastActive: freezed == lastActive
-                ? _value.lastActive
-                : lastActive // ignore: cast_nullable_to_non_nullable
-                      as DateTime?,
-            isVerified: freezed == isVerified
-                ? _value.isVerified
-                : isVerified // ignore: cast_nullable_to_non_nullable
-                      as bool?,
             themePreference: freezed == themePreference
                 ? _value.themePreference
                 : themePreference // ignore: cast_nullable_to_non_nullable
@@ -234,23 +223,21 @@ abstract class _$$UserModelImplCopyWith<$Res>
     String username,
     String displayName,
     String email,
+    DateTime? lastActive,
+    bool? isVerified,
     String? country,
     bool? isCountryPublic,
     int? age,
     bool? isAgePublic,
     String? address,
     String? bio,
-    List<String>? languages,
+    List<Map<String, String>>? languages,
     List<String>? interests,
     String? profilePictureUrl,
     List<String>? friends,
     List<String>? blockedUsers,
     List<String>? lettersSent,
     List<String>? lettersReceived,
-    List<String>? purchases,
-    List<String>? badges,
-    DateTime? lastActive,
-    bool? isVerified,
     String? themePreference,
   });
 }
@@ -273,6 +260,8 @@ class __$$UserModelImplCopyWithImpl<$Res>
     Object? username = null,
     Object? displayName = null,
     Object? email = null,
+    Object? lastActive = freezed,
+    Object? isVerified = freezed,
     Object? country = freezed,
     Object? isCountryPublic = freezed,
     Object? age = freezed,
@@ -286,10 +275,6 @@ class __$$UserModelImplCopyWithImpl<$Res>
     Object? blockedUsers = freezed,
     Object? lettersSent = freezed,
     Object? lettersReceived = freezed,
-    Object? purchases = freezed,
-    Object? badges = freezed,
-    Object? lastActive = freezed,
-    Object? isVerified = freezed,
     Object? themePreference = freezed,
   }) {
     return _then(
@@ -310,6 +295,14 @@ class __$$UserModelImplCopyWithImpl<$Res>
             ? _value.email
             : email // ignore: cast_nullable_to_non_nullable
                   as String,
+        lastActive: freezed == lastActive
+            ? _value.lastActive
+            : lastActive // ignore: cast_nullable_to_non_nullable
+                  as DateTime?,
+        isVerified: freezed == isVerified
+            ? _value.isVerified
+            : isVerified // ignore: cast_nullable_to_non_nullable
+                  as bool?,
         country: freezed == country
             ? _value.country
             : country // ignore: cast_nullable_to_non_nullable
@@ -337,7 +330,7 @@ class __$$UserModelImplCopyWithImpl<$Res>
         languages: freezed == languages
             ? _value._languages
             : languages // ignore: cast_nullable_to_non_nullable
-                  as List<String>?,
+                  as List<Map<String, String>>?,
         interests: freezed == interests
             ? _value._interests
             : interests // ignore: cast_nullable_to_non_nullable
@@ -362,22 +355,6 @@ class __$$UserModelImplCopyWithImpl<$Res>
             ? _value._lettersReceived
             : lettersReceived // ignore: cast_nullable_to_non_nullable
                   as List<String>?,
-        purchases: freezed == purchases
-            ? _value._purchases
-            : purchases // ignore: cast_nullable_to_non_nullable
-                  as List<String>?,
-        badges: freezed == badges
-            ? _value._badges
-            : badges // ignore: cast_nullable_to_non_nullable
-                  as List<String>?,
-        lastActive: freezed == lastActive
-            ? _value.lastActive
-            : lastActive // ignore: cast_nullable_to_non_nullable
-                  as DateTime?,
-        isVerified: freezed == isVerified
-            ? _value.isVerified
-            : isVerified // ignore: cast_nullable_to_non_nullable
-                  as bool?,
         themePreference: freezed == themePreference
             ? _value.themePreference
             : themePreference // ignore: cast_nullable_to_non_nullable
@@ -395,45 +372,47 @@ class _$UserModelImpl implements _UserModel {
     required this.username,
     required this.displayName,
     required this.email,
+    this.lastActive,
+    this.isVerified,
     this.country,
     this.isCountryPublic,
     this.age,
     this.isAgePublic,
     this.address,
     this.bio,
-    final List<String>? languages,
+    final List<Map<String, String>>? languages,
     final List<String>? interests,
     this.profilePictureUrl,
     final List<String>? friends,
     final List<String>? blockedUsers,
     final List<String>? lettersSent,
     final List<String>? lettersReceived,
-    final List<String>? purchases,
-    final List<String>? badges,
-    this.lastActive,
-    this.isVerified,
     this.themePreference,
   }) : _languages = languages,
        _interests = interests,
        _friends = friends,
        _blockedUsers = blockedUsers,
        _lettersSent = lettersSent,
-       _lettersReceived = lettersReceived,
-       _purchases = purchases,
-       _badges = badges;
+       _lettersReceived = lettersReceived;
 
   factory _$UserModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$UserModelImplFromJson(json);
 
   @override
   final String userId;
+  // Firebase UID
   @override
   final String username;
-  // unique handle
+  // unique handle (uygulama içi)
   @override
   final String displayName;
+  //uyugulama içi gösterilen isim
   @override
   final String email;
+  @override
+  final DateTime? lastActive;
+  @override
+  final bool? isVerified;
   @override
   final String? country;
   @override
@@ -447,9 +426,9 @@ class _$UserModelImpl implements _UserModel {
   // store only if necessary and encrypt
   @override
   final String? bio;
-  final List<String>? _languages;
+  final List<Map<String, String>>? _languages;
   @override
-  List<String>? get languages {
+  List<Map<String, String>>? get languages {
     final value = _languages;
     if (value == null) return null;
     if (_languages is EqualUnmodifiableListView) return _languages;
@@ -509,36 +488,12 @@ class _$UserModelImpl implements _UserModel {
     return EqualUnmodifiableListView(value);
   }
 
-  final List<String>? _purchases;
-  @override
-  List<String>? get purchases {
-    final value = _purchases;
-    if (value == null) return null;
-    if (_purchases is EqualUnmodifiableListView) return _purchases;
-    // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(value);
-  }
-
-  final List<String>? _badges;
-  @override
-  List<String>? get badges {
-    final value = _badges;
-    if (value == null) return null;
-    if (_badges is EqualUnmodifiableListView) return _badges;
-    // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(value);
-  }
-
-  @override
-  final DateTime? lastActive;
-  @override
-  final bool? isVerified;
   @override
   final String? themePreference;
 
   @override
   String toString() {
-    return 'UserModel(userId: $userId, username: $username, displayName: $displayName, email: $email, country: $country, isCountryPublic: $isCountryPublic, age: $age, isAgePublic: $isAgePublic, address: $address, bio: $bio, languages: $languages, interests: $interests, profilePictureUrl: $profilePictureUrl, friends: $friends, blockedUsers: $blockedUsers, lettersSent: $lettersSent, lettersReceived: $lettersReceived, purchases: $purchases, badges: $badges, lastActive: $lastActive, isVerified: $isVerified, themePreference: $themePreference)';
+    return 'UserModel(userId: $userId, username: $username, displayName: $displayName, email: $email, lastActive: $lastActive, isVerified: $isVerified, country: $country, isCountryPublic: $isCountryPublic, age: $age, isAgePublic: $isAgePublic, address: $address, bio: $bio, languages: $languages, interests: $interests, profilePictureUrl: $profilePictureUrl, friends: $friends, blockedUsers: $blockedUsers, lettersSent: $lettersSent, lettersReceived: $lettersReceived, themePreference: $themePreference)';
   }
 
   @override
@@ -552,6 +507,10 @@ class _$UserModelImpl implements _UserModel {
             (identical(other.displayName, displayName) ||
                 other.displayName == displayName) &&
             (identical(other.email, email) || other.email == email) &&
+            (identical(other.lastActive, lastActive) ||
+                other.lastActive == lastActive) &&
+            (identical(other.isVerified, isVerified) ||
+                other.isVerified == isVerified) &&
             (identical(other.country, country) || other.country == country) &&
             (identical(other.isCountryPublic, isCountryPublic) ||
                 other.isCountryPublic == isCountryPublic) &&
@@ -583,15 +542,6 @@ class _$UserModelImpl implements _UserModel {
               other._lettersReceived,
               _lettersReceived,
             ) &&
-            const DeepCollectionEquality().equals(
-              other._purchases,
-              _purchases,
-            ) &&
-            const DeepCollectionEquality().equals(other._badges, _badges) &&
-            (identical(other.lastActive, lastActive) ||
-                other.lastActive == lastActive) &&
-            (identical(other.isVerified, isVerified) ||
-                other.isVerified == isVerified) &&
             (identical(other.themePreference, themePreference) ||
                 other.themePreference == themePreference));
   }
@@ -604,6 +554,8 @@ class _$UserModelImpl implements _UserModel {
     username,
     displayName,
     email,
+    lastActive,
+    isVerified,
     country,
     isCountryPublic,
     age,
@@ -617,10 +569,6 @@ class _$UserModelImpl implements _UserModel {
     const DeepCollectionEquality().hash(_blockedUsers),
     const DeepCollectionEquality().hash(_lettersSent),
     const DeepCollectionEquality().hash(_lettersReceived),
-    const DeepCollectionEquality().hash(_purchases),
-    const DeepCollectionEquality().hash(_badges),
-    lastActive,
-    isVerified,
     themePreference,
   ]);
 
@@ -644,23 +592,21 @@ abstract class _UserModel implements UserModel {
     required final String username,
     required final String displayName,
     required final String email,
+    final DateTime? lastActive,
+    final bool? isVerified,
     final String? country,
     final bool? isCountryPublic,
     final int? age,
     final bool? isAgePublic,
     final String? address,
     final String? bio,
-    final List<String>? languages,
+    final List<Map<String, String>>? languages,
     final List<String>? interests,
     final String? profilePictureUrl,
     final List<String>? friends,
     final List<String>? blockedUsers,
     final List<String>? lettersSent,
     final List<String>? lettersReceived,
-    final List<String>? purchases,
-    final List<String>? badges,
-    final DateTime? lastActive,
-    final bool? isVerified,
     final String? themePreference,
   }) = _$UserModelImpl;
 
@@ -668,13 +614,17 @@ abstract class _UserModel implements UserModel {
       _$UserModelImpl.fromJson;
 
   @override
-  String get userId;
+  String get userId; // Firebase UID
   @override
-  String get username; // unique handle
+  String get username; // unique handle (uygulama içi)
   @override
-  String get displayName;
+  String get displayName; //uyugulama içi gösterilen isim
   @override
   String get email;
+  @override
+  DateTime? get lastActive;
+  @override
+  bool? get isVerified;
   @override
   String? get country;
   @override
@@ -688,7 +638,7 @@ abstract class _UserModel implements UserModel {
   @override
   String? get bio;
   @override
-  List<String>? get languages;
+  List<Map<String, String>>? get languages;
   @override
   List<String>? get interests;
   @override
@@ -701,14 +651,6 @@ abstract class _UserModel implements UserModel {
   List<String>? get lettersSent;
   @override
   List<String>? get lettersReceived;
-  @override
-  List<String>? get purchases;
-  @override
-  List<String>? get badges;
-  @override
-  DateTime? get lastActive;
-  @override
-  bool? get isVerified;
   @override
   String? get themePreference;
 

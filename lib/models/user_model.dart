@@ -22,7 +22,7 @@ class UserModel with _$UserModel {
     String? address, // store only if necessary and encrypt
 
     String? bio,
-    List<String>? languages,
+    List<Map<String, String>>? languages,
     List<String>? interests,
     String? profilePictureUrl,
 
@@ -32,8 +32,7 @@ class UserModel with _$UserModel {
     List<String>? lettersSent,
     List<String>? lettersReceived,
 
-    List<String>? purchases,
-    List<String>? badges,
+
 
 
 

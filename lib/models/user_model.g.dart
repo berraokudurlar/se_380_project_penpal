@@ -12,6 +12,10 @@ _$UserModelImpl _$$UserModelImplFromJson(Map<String, dynamic> json) =>
       username: json['username'] as String,
       displayName: json['displayName'] as String,
       email: json['email'] as String,
+      lastActive: json['lastActive'] == null
+          ? null
+          : DateTime.parse(json['lastActive'] as String),
+      isVerified: json['isVerified'] as bool?,
       country: json['country'] as String?,
       isCountryPublic: json['isCountryPublic'] as bool?,
       age: (json['age'] as num?)?.toInt(),
@@ -19,7 +23,7 @@ _$UserModelImpl _$$UserModelImplFromJson(Map<String, dynamic> json) =>
       address: json['address'] as String?,
       bio: json['bio'] as String?,
       languages: (json['languages'] as List<dynamic>?)
-          ?.map((e) => e as String)
+          ?.map((e) => Map<String, String>.from(e as Map))
           .toList(),
       interests: (json['interests'] as List<dynamic>?)
           ?.map((e) => e as String)
@@ -37,16 +41,6 @@ _$UserModelImpl _$$UserModelImplFromJson(Map<String, dynamic> json) =>
       lettersReceived: (json['lettersReceived'] as List<dynamic>?)
           ?.map((e) => e as String)
           .toList(),
-      purchases: (json['purchases'] as List<dynamic>?)
-          ?.map((e) => e as String)
-          .toList(),
-      badges: (json['badges'] as List<dynamic>?)
-          ?.map((e) => e as String)
-          .toList(),
-      lastActive: json['lastActive'] == null
-          ? null
-          : DateTime.parse(json['lastActive'] as String),
-      isVerified: json['isVerified'] as bool?,
       themePreference: json['themePreference'] as String?,
     );
 
@@ -56,6 +50,8 @@ Map<String, dynamic> _$$UserModelImplToJson(_$UserModelImpl instance) =>
       'username': instance.username,
       'displayName': instance.displayName,
       'email': instance.email,
+      'lastActive': instance.lastActive?.toIso8601String(),
+      'isVerified': instance.isVerified,
       'country': instance.country,
       'isCountryPublic': instance.isCountryPublic,
       'age': instance.age,
@@ -69,9 +65,5 @@ Map<String, dynamic> _$$UserModelImplToJson(_$UserModelImpl instance) =>
       'blockedUsers': instance.blockedUsers,
       'lettersSent': instance.lettersSent,
       'lettersReceived': instance.lettersReceived,
-      'purchases': instance.purchases,
-      'badges': instance.badges,
-      'lastActive': instance.lastActive?.toIso8601String(),
-      'isVerified': instance.isVerified,
       'themePreference': instance.themePreference,
     };
