@@ -7,6 +7,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:se_380_project_penpal/models/user_model.dart';
 
 
+
+
 class EditProfileScreen extends StatefulWidget {
   final String displayName;
   final String username;
@@ -53,6 +55,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   @override
   void initState() {
     super.initState();
+
+
     // Initialize with passed data
     _displayNameController = TextEditingController(text: widget.displayName);
     _usernameController = TextEditingController(text: widget.username);
@@ -64,7 +68,33 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     _languages = List<Map<String, String>>.from(
       widget.languages.map((lang) => Map<String, String>.from(lang)),
     );
+
+    if (widget.isFirstSetup) {
+      _loadUserFromFirestore();
+    }
   }
+
+  Future<void> _loadUserFromFirestore() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+
+    final doc = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid)
+        .get();
+
+    if (!doc.exists) return;
+
+    final model = UserModel.fromJson(doc.data()!);
+
+    if (!mounted) return;
+
+    setState(() {
+      _displayNameController.text = model.displayName;
+      _usernameController.text = model.username;
+    });
+  }
+
 
   @override
   void dispose() {
