@@ -51,6 +51,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   String _newInterest = "";
   bool isSaving = false;
 
+  bool _isCountryPrivate = false;
+
   @override
   void initState() {
     super.initState();
@@ -658,6 +660,18 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             decoration: InputDecoration(
               labelText: "Country",
               prefixIcon: Icon(Icons.public, color: Colors.brown.shade600),
+              suffixIcon: IconButton( tooltip: _isCountryPrivate
+                  ? "Only visible to you"
+                  : "Visible to everyone",
+                icon: Icon(
+                  _isCountryPrivate ? Icons.lock : Icons.visibility,
+                  color: Colors.brown.shade600,
+                ),
+                onPressed: () {
+                  setState(() {
+                    _isCountryPrivate = !_isCountryPrivate;
+                  });
+                },),
               labelStyle: TextStyle(fontFamily: 'Georgia', color: Colors.brown.shade600),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),

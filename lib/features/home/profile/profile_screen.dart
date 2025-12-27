@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:se_380_project_penpal/theme/app_theme.dart';
+import '../../services/user_service.dart';
 import 'edit_profile_screen.dart';
 import '../../../models/user_model.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+
+
+
+
+
+
 
 
 class ProfileScreen extends StatefulWidget {
@@ -29,51 +35,42 @@ class _ProfileScreenState extends State<ProfileScreen> {
   int receivedCount = 0;
   int friendsCount = 0;
 
+  final UserService _userService = UserService();
+
   @override
   void initState() {
     super.initState();
-    _loadUserFromFirestore();
+    _loadUser();
   }
 
-  Future<void> _loadUserFromFirestore() async {
+  Future<void> _loadUser() async {
     try {
-      final currentUser = FirebaseAuth.instance.currentUser;
-      if (currentUser == null) {
+      final user = await _userService.getCurrentUser();
+
+      if (user == null) {
         setState(() => isLoading = false);
         return;
       }
-
-      final doc = await FirebaseFirestore.instance
-          .collection('users')
-          .doc(currentUser.uid)
-          .get();
-
-      if (!doc.exists) {
-        setState(() => isLoading = false);
-        return;
-      }
-
-      final model = UserModel.fromJson(doc.data()!);
 
       setState(() {
-        displayName = model.displayName;
-        username = model.username;
-        bio = model.bio ?? "";
+        displayName = user.displayName;
+        username = user.username;
+        bio = user.bio ?? "";
 
-        country = (model.isCountryPublic ?? false)
-            ? (model.country ?? "Unknown")
+        country = (user.isCountryPublic ?? false)
+            ? (user.country ?? "Unknown")
             : "Hidden";
 
-        age = (model.isAgePublic ?? false && model.age != null)
-            ? model.age.toString()
+        age = (user.isAgePublic ?? false && user.age != null)
+            ? user.age.toString()
             : "Hidden";
 
-        interests = model.interests ?? [];
+        interests = user.interests ?? [];
 
-        languages = model.languages ?? [];
-        sentCount = model.lettersSent?.length ?? 0;
-        receivedCount = model.lettersReceived?.length ?? 0;
-        friendsCount = model.friends?.length ?? 0;
+        languages = user.languages ?? [];
+        sentCount = user.lettersSent?.length ?? 0;
+        receivedCount = user.lettersReceived?.length ?? 0;
+        friendsCount = user.friends?.length ?? 0;
 
         status = "Online";
         isLoading = false;
@@ -89,135 +86,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     if (isLoading) {
-      return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      );
+      return const Center(child: CircularProgressIndicator());
     }
 
-    return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      body: CustomScrollView(
+    return Container(
+      color: Theme.of(context).scaffoldBackgroundColor,
+      child: CustomScrollView(
         physics: const BouncingScrollPhysics(),
         slivers: [
-          SliverAppBar(
-            expandedHeight: 80,
-            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-            elevation: 0,
-            automaticallyImplyLeading: false,
-            actions: [
-              Padding(
-                padding: const EdgeInsets.only(right: 16, top: 8),
-                child: Material(
-                  color: Colors.transparent,
-                  child: InkWell(
-                    onTap: () async {
-                      final result = await Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => EditProfileScreen(
-                            displayName: displayName,
-                            username: username,
-                            bio: bio,
-                            status: status,
-                            country: country,
-                            age: age,
-                            interests: interests,
-                            languages: languages,
-                          ),
-                        ),
-                      );
-
-                      if (result != null) {
-                        setState(() {
-                          displayName = result['displayName'] ?? displayName;
-                          username = result['username'] ?? username;
-                          bio = result['bio'] ?? bio;
-                          status = result['status'] ?? status;
-                          country = result['country'] ?? country;
-                          age = result['age'] ?? age;
-                          interests =
-                          List<String>.from(result['interests'] ?? interests);
-                          languages = List<Map<String, String>>.from(
-                            (result['languages'] as List)
-                                .map((e) => Map<String, String>.from(e)),
-                          );
-                        });
-                      }
-                    },
-                    borderRadius: BorderRadius.circular(12),
-                    child: Container(
-                      padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [
-                            Colors.brown.shade600,
-                            Colors.brown.shade800,
-                          ],
-                        ),
-                        borderRadius: BorderRadius.circular(12),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.brown.withOpacity(0.3),
-                            blurRadius: 8,
-                            offset: const Offset(0, 3),
-                          ),
-                        ],
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: const [
-                          Icon(
-                            Icons.edit,
-                            color: Colors.white,
-                            size: 18,
-                          ),
-                          SizedBox(width: 6),
-                          Text(
-                            'Edit',
-                            style: TextStyle(
-                              fontFamily: 'Georgia',
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-
-          // Profile content
           SliverToBoxAdapter(
             child: Padding(
               padding: const EdgeInsets.all(20),
               child: Column(
                 children: [
-                  // Profile Picture Card
                   _buildProfileHeader(),
                   const SizedBox(height: 24),
-
-                  // Bio Card
                   _buildBioCard(),
                   const SizedBox(height: 16),
-
-                  // Stats Card
                   _buildStatsCard(),
                   const SizedBox(height: 16),
-
-                  // Interests Section
                   _buildInterestsCard(),
                   const SizedBox(height: 16),
-
-                  // Details Card
                   _buildDetailsCard(),
                   const SizedBox(height: 16),
-
-                  // Languages Card
                   _buildLanguagesCard(),
                   const SizedBox(height: 32),
                 ],
@@ -227,6 +118,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ],
       ),
     );
+
   }
 
   Widget _buildProfileHeader() {

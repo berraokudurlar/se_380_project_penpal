@@ -6,9 +6,14 @@ import 'package:se_380_project_penpal/features/home/letters/write_letter_screen.
 import 'package:se_380_project_penpal/features/home/profile/profile_screen.dart';
 import 'package:se_380_project_penpal/features/home/settings_screen.dart';
 import 'package:se_380_project_penpal/theme/app_theme.dart';
+import 'package:se_380_project_penpal/features/home/profile/edit_profile_screen.dart';
+import '../../models/user_model.dart';
+import '../services/user_service.dart';
+
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -16,13 +21,17 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
+  final UserService _userService = UserService();
+  UserModel? _currentUser;
+  Key _profileKey = UniqueKey();
 
-  final List<Widget> _pages = [
+  List<Widget> get _pages => [
     LetterboxScreen(),
     FriendsScreen(),
     WriteLetterScreen(),
-    ProfileScreen(),
+    ProfileScreen(key: _profileKey),
   ];
+
 
   final List<String> _pageTitles = [
     'Letterbox',
@@ -30,6 +39,22 @@ class _HomeScreenState extends State<HomeScreen> {
     'Write a Letter',
     'Profile',
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUser();
+  }
+
+  Future<void> _loadUser() async {
+    final user = await _userService.getCurrentUser();
+    if (mounted) {
+      setState(() {
+        _currentUser = user;
+      });
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -57,7 +82,70 @@ class _HomeScreenState extends State<HomeScreen> {
             fontSize: 22,
           ),
         ),
+
+        actions: _selectedIndex == 3 && _currentUser != null
+            ? [
+          Padding(
+            padding: const EdgeInsets.only(right: 16),
+            child: InkWell(
+              borderRadius: BorderRadius.circular(12),
+              onTap: () async {
+                await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => EditProfileScreen(
+                      displayName: _currentUser!.displayName,
+                      username: _currentUser!.username,
+                      bio: _currentUser!.bio ?? "",
+                      status: "Online",
+                      country: _currentUser!.country ?? "",
+                      age: _currentUser!.age?.toString() ?? "",
+                      interests: _currentUser!.interests ?? [],
+                      languages: _currentUser!.languages ?? [],
+                    ),
+                  ),
+                );
+
+                // Edit sonrası profili yeniden çek
+                //_loadUser();
+                await _loadUser();
+                setState(() {
+                  _profileKey = UniqueKey();
+                });
+              },
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      Colors.brown.shade600,
+                      Colors.brown.shade800,
+                    ],
+                  ),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: const Row(
+                  children: [
+                    Icon(Icons.edit, color: Colors.white, size: 18),
+                    SizedBox(width: 6),
+                    Text(
+                      'Edit',
+                      style: TextStyle(
+                        fontFamily: 'Georgia',
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ]
+            : null,
       ),
+
       drawer: Drawer(
         elevation: 0,
         child: Container(
