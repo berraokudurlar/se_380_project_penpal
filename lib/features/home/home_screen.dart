@@ -21,19 +21,11 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
+
   final UserService _userService = UserService();
   UserModel? _currentUser;
-  Key _profileKey = UniqueKey();
 
-  List<Widget> get _pages => [
-    LetterboxScreen(),
-    FriendsScreen(),
-    WriteLetterScreen(),
-    ProfileScreen(key: _profileKey),
-  ];
-
-
-  final List<String> _pageTitles = [
+  final List<String> _pageTitles = const [
     'Letterbox',
     'Your Key Pals',
     'Write a Letter',
@@ -43,17 +35,27 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    _loadUser();
+    _loadCurrentUser();
   }
 
-  Future<void> _loadUser() async {
+  Future<void> _loadCurrentUser() async {
     final user = await _userService.getCurrentUser();
-    if (mounted) {
-      setState(() {
-        _currentUser = user;
-      });
-    }
+    if (!mounted) return;
+
+    setState(() {
+      _currentUser = user;
+    });
   }
+
+  List<Widget> get _pages => [
+    const LetterboxScreen(),
+    const FriendsScreen(),
+    const WriteLetterScreen(),
+    if (_currentUser != null)
+      ProfileScreen(user: _currentUser!)
+    else
+      const Center(child: CircularProgressIndicator()),
+  ];
 
 
   @override
@@ -90,7 +92,7 @@ class _HomeScreenState extends State<HomeScreen> {
             child: InkWell(
               borderRadius: BorderRadius.circular(12),
               onTap: () async {
-                await Navigator.push(
+                final updatedUser = await Navigator.push<UserModel>(
                   context,
                   MaterialPageRoute(
                     builder: (_) => EditProfileScreen(
@@ -105,12 +107,11 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 );
 
-                // Edit sonrası profili yeniden çek
-                //_loadUser();
-                await _loadUser();
-                setState(() {
-                  _profileKey = UniqueKey();
-                });
+                if (updatedUser != null && mounted) {
+                  setState(() {
+                    _currentUser = updatedUser;
+                  });
+                }
               },
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),

@@ -4,82 +4,18 @@ import '../../services/user_service.dart';
 import 'edit_profile_screen.dart';
 import '../../../models/user_model.dart';
 
-class ProfileScreen extends StatefulWidget {
-  const ProfileScreen({super.key});
+class ProfileScreen extends StatelessWidget {
+  final UserModel user;
 
-  @override
-  State<ProfileScreen> createState() => _ProfileScreenState();
-}
-
-class _ProfileScreenState extends State<ProfileScreen> {
-  bool isLoading = true;
-
-  String displayName = "";
-  String username = "";
-  String bio = "";
-  String country = "Hidden";
-  String age = "Hidden";
-
-  List<String> interests = [];
-  List<Map<String, String>> languages = [];
-
-  int sentCount = 0;
-  int receivedCount = 0;
-  int friendsCount = 0;
-
-  final UserService _userService = UserService();
-
-  @override
-  void initState() {
-    super.initState();
-    _loadUser();
-  }
-
-  Future<void> _loadUser() async {
-    try {
-      final user = await _userService.getCurrentUser();
-
-      if (user == null) {
-        setState(() => isLoading = false);
-        return;
-      }
-
-      setState(() {
-        displayName = user.displayName;
-        username = user.username;
-        bio = user.bio ?? "";
-
-        country = (user.isCountryPublic ?? false)
-            ? (user.country ?? "Unknown")
-            : "Hidden";
-
-        age = (user.isAgePublic ?? false && user.age != null)
-            ? user.age.toString()
-            : "Hidden";
-
-        interests = user.interests ?? [];
-
-        languages = user.languages ?? [];
-        sentCount = user.lettersSent?.length ?? 0;
-        receivedCount = user.lettersReceived?.length ?? 0;
-        friendsCount = user.friends?.length ?? 0;
-
-        isLoading = false;
-      });
-    } catch (e) {
-      debugPrint("Profile load error: $e");
-      setState(() => isLoading = false);
-    }
-  }
+  const ProfileScreen({
+    super.key,
+    required this.user,
+  });
 
 
 
   @override
   Widget build(BuildContext context) {
-    if (isLoading) {
-      return const Center(child: CircularProgressIndicator());
-    }
-
     return Container(
       color: Theme.of(context).scaffoldBackgroundColor,
       child: CustomScrollView(
@@ -156,7 +92,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
           // Name
           Text(
-            displayName,
+            user.displayName,
             style: const TextStyle(
               fontFamily: 'Georgia',
               fontSize: 26,
@@ -168,7 +104,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
           // Username
           Text(
-            "@$username",
+            "@${user.username}",
             style: TextStyle(
               fontFamily: 'Georgia',
               fontSize: 16,
@@ -216,7 +152,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
           const SizedBox(height: 12),
           Text(
-            bio,
+            user.bio ?? "",
             style: const TextStyle(
               fontFamily: 'Georgia',
               fontSize: 15,
@@ -248,7 +184,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           Expanded(
             child: _buildStatItem(
               Icons.send_outlined,
-              sentCount.toString(),
+              (user.lettersSent?.length ?? 0).toString(),
               "Sent",
             ),
           ),
@@ -260,7 +196,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           Expanded(
             child: _buildStatItem(
               Icons.mail_outline,
-              receivedCount.toString(),
+              (user.lettersReceived?.length ?? 0).toString(),
               "Received",
             ),
           ),
@@ -272,7 +208,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           Expanded(
             child: _buildStatItem(
               Icons.people_outline,
-              friendsCount.toString(),
+              (user.friends?.length ?? 0).toString(),
               "Key Pals",
             ),
           ),
@@ -344,7 +280,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
           Wrap(
             spacing: 8,
             runSpacing: 8,
-            children: interests.map((interest) => _buildInterestTag(interest)).toList(),
+            children: (user.interests ?? [])
+                .map((interest) => _buildInterestTag(interest))
+                .toList(),
           ),
         ],
       ),
@@ -377,6 +315,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget _buildDetailsCard() {
+    final country = (user.isCountryPublic ?? false)
+        ? (user.country ?? "Unknown")
+        : "Hidden";
+
+    final age = (user.isAgePublic ?? false && user.age != null)
+        ? user.age.toString()
+        : "Hidden";
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(20),
@@ -409,6 +355,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
             ],
           ),
+
+
+
           const SizedBox(height: 16),
           _buildDetailRow(Icons.public, "Country", country),
           const SizedBox(height: 12),
@@ -486,7 +435,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ],
           ),
           const SizedBox(height: 16),
-          ...languages.asMap().entries.map((entry) {
+          ...(user.languages ?? []).asMap().entries.map((entry){
             int index = entry.key;
             var lang = entry.value;
 

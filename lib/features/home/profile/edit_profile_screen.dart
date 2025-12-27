@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:se_380_project_penpal/features/home/home_screen.dart';
 import 'package:se_380_project_penpal/theme/app_theme.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:se_380_project_penpal/models/user_model.dart';
+import '../../services/user_service.dart';
 
 
 
@@ -36,6 +34,8 @@ class EditProfileScreen extends StatefulWidget {
 }
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
+  final UserService _userService = UserService();
+
   late TextEditingController _displayNameController;
   late TextEditingController _usernameController;
   late TextEditingController _bioController;
@@ -66,31 +66,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       widget.languages.map((lang) => Map<String, String>.from(lang)),
     );
 
-    if (widget.isFirstSetup) {
-      _loadUserFromFirestore();
-    }
+
   }
 
-  Future<void> _loadUserFromFirestore() async {
-    final user = FirebaseAuth.instance.currentUser;
-    if (user == null) return;
-
-    final doc = await FirebaseFirestore.instance
-        .collection('users')
-        .doc(user.uid)
-        .get();
-
-    if (!doc.exists) return;
-
-    final model = UserModel.fromJson(doc.data()!);
-
-    if (!mounted) return;
-
-    setState(() {
-      _displayNameController.text = model.displayName;
-      _usernameController.text = model.username;
-    });
-  }
 
 
   @override
@@ -890,24 +868,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   Future<void> _saveProfile() async {
-    final user = FirebaseAuth.instance.currentUser;
-    if (user == null) return;
-
     setState(() => isSaving = true);
 
     try {
-      final doc = await FirebaseFirestore.instance
-          .collection('users')
-          .doc(user.uid)
-          .get();
-
-      if (!doc.exists) {
-        throw Exception("User document not found");
-      }
-
-      final currentUser = UserModel.fromJson(doc.data()!);
-
-      final updatedUser = currentUser.copyWith(
+      final updatedUser =
+      await _userService.updateProfileAndReturn(
         displayName: _displayNameController.text.trim(),
         username: _usernameController.text.trim(),
         bio: _bioController.text.trim(),
@@ -915,13 +880,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         age: int.tryParse(_ageController.text),
         interests: _interests,
         languages: _languages,
-        lastActive: DateTime.now(),
       );
-
-      await FirebaseFirestore.instance
-          .collection('users')
-          .doc(user.uid)
-          .update(updatedUser.toJson());
 
       if (!mounted) return;
 
@@ -936,19 +895,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       if (widget.isFirstSetup) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (_) => const HomeScreen()),
+          MaterialPageRoute(
+            builder: (_) => const HomeScreen(),
+          ),
         );
       } else {
-        Navigator.pop(context, {
-          'displayName': updatedUser.displayName,
-          'username': updatedUser.username,
-          'bio': updatedUser.bio,
-          'country': updatedUser.country,
-          'age': updatedUser.age?.toString() ?? "Hidden",
-          'interests': updatedUser.interests,
-          'languages': _languages,
-        });
-
+        Navigator.pop(context, updatedUser);
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(

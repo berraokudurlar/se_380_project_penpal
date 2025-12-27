@@ -14,12 +14,6 @@ class UserService {
     return getUserById(uid);
   }
 
-  Stream<UserModel?> streamCurrentUser() {
-    final uid = currentUserId;
-    if (uid == null) return const Stream.empty();
-    return streamUserById(uid);
-  }
-
   Future<UserModel?> getUserById(String userId) async {
     try {
       final doc = await _firestore.collection('users').doc(userId).get();
@@ -28,13 +22,6 @@ class UserService {
     } catch (e) {
       rethrow;
     }
-  }
-
-  Stream<UserModel?> streamUserById(String userId) {
-    return _firestore.collection('users').doc(userId).snapshots().map((snap) {
-      if (!snap.exists || snap.data() == null) return null;
-      return UserModel.fromJson(snap.data()!);
-    });
   }
 
   Future<UserModel?> getUserByUsername(String username) async {
@@ -96,6 +83,52 @@ class UserService {
       'lastActive': FieldValue.serverTimestamp(),
     });
   }
+
+  Future<UserModel> updateProfileAndReturn({
+    required String displayName,
+    required String username,
+    String? bio,
+    String? country,
+    bool? isCountryPublic,
+    int? age,
+    bool? isAgePublic,
+    List<String>? interests,
+    List<Map<String, String>>? languages,
+  }) async {
+    final uid = currentUserId;
+    if (uid == null) throw Exception("User not authenticated");
+
+    // Mevcut kullanıcıyı al
+    final currentUser = await getUserById(uid);
+    if (currentUser == null) {
+      throw Exception("User document not found");
+    }
+
+    // Yeni UserModel üret
+    final updatedUser = currentUser.copyWith(
+      displayName: displayName,
+      username: username,
+      bio: bio,
+      country: country,
+      isCountryPublic: isCountryPublic,
+      age: age,
+      isAgePublic: isAgePublic,
+      interests: interests,
+      languages: languages,
+      lastActive: DateTime.now(),
+    );
+
+    // Firestore'a yaz
+    await _firestore
+        .collection('users')
+        .doc(uid)
+        .update(updatedUser.toJson());
+
+    // UI için geri döndür
+    return updatedUser;
+  }
+
+
 
 
   Future<void> setCountryPublic(bool isPublic) async {
