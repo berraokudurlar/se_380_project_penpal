@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:se_380_project_penpal/features/auth/register_screen.dart';
 import 'package:se_380_project_penpal/features/home/home_screen.dart';
 import 'package:lottie/lottie.dart';

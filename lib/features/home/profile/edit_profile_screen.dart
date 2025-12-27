@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:se_380_project_penpal/features/home/home_screen.dart';
-import 'package:se_380_project_penpal/features/home/profile/profile_screen.dart';
 import 'package:se_380_project_penpal/theme/app_theme.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -368,7 +367,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           ),
           const SizedBox(height: 12),
           DropdownButtonFormField<String>(
-            value: _status,
+            initialValue: _status,
             items: const [
               DropdownMenuItem(value: "Online", child: Text("Online")),
               DropdownMenuItem(value: "Busy", child: Text("Busy")),
@@ -742,7 +741,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               padding: const EdgeInsets.only(bottom: 10),
               child: _buildLanguageItem(index, lang),
             );
-          }).toList(),
+          }),
           const SizedBox(height: 10),
           GestureDetector(
             onTap: _addLanguage,
@@ -855,7 +854,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               ),
               const SizedBox(height: 16),
               DropdownButtonFormField<String>(
-                value: newLevel,
+                initialValue: newLevel,
                 items: const [
                   DropdownMenuItem(value: "Beginner", child: Text("Beginner")),
                   DropdownMenuItem(value: "Intermediate", child: Text("Intermediate")),

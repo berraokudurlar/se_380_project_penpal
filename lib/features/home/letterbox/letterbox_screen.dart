@@ -17,8 +17,14 @@ class LetterboxScreen extends StatefulWidget {
 class _LetterboxScreenState extends State<LetterboxScreen> {
   final PageController _pageController = PageController();
   final LetterService _letterService = LetterService();
+  late Stream<List<LetterModel>> _lettersStream;
   int _currentPage = 0;
 
+  @override
+  void initState() {
+    super.initState();
+    _lettersStream = _letterService.getReceivedLetters();
+  }
   @override
   void dispose() {
     _pageController.dispose();
@@ -30,7 +36,7 @@ class _LetterboxScreenState extends State<LetterboxScreen> {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: StreamBuilder<List<LetterModel>>(
-        stream: _letterService.getReceivedLetters(),
+        stream: _lettersStream,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(

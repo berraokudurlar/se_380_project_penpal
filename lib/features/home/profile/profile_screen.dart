@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:se_380_project_penpal/theme/app_theme.dart';
 import 'edit_profile_screen.dart';
 import '../../../models/user_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -635,7 +634,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               padding: const EdgeInsets.only(bottom: 10),
               child: _buildLanguageChip(lang["language"]!, lang["level"]!, chipColor),
             );
-          }).toList(),
+          }),
         ],
       ),
     );

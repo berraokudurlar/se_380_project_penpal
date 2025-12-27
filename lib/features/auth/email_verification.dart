@@ -142,7 +142,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                 child: const Icon(
                   Icons.mark_email_unread,
                   size: 90,
-                  color: const Color(0xFF6B4423),
+                  color: Color(0xFF6B4423),
                 ),
               ),
               const SizedBox(height: 30),
