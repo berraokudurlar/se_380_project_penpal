@@ -4,13 +4,6 @@ import '../../services/user_service.dart';
 import 'edit_profile_screen.dart';
 import '../../../models/user_model.dart';
 
-
-
-
-
-
-
-
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
 
@@ -24,7 +17,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   String displayName = "";
   String username = "";
   String bio = "";
-  String status = "Offline";
   String country = "Hidden";
   String age = "Hidden";
 
@@ -72,7 +64,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
         receivedCount = user.lettersReceived?.length ?? 0;
         friendsCount = user.friends?.length ?? 0;
 
-        status = "Online";
         isLoading = false;
       });
     } catch (e) {
@@ -156,25 +147,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     Icons.person,
                     size: 60,
                     color: Colors.brown.shade600,
-                  ),
-                ),
-              ),
-              Positioned(
-                bottom: 5,
-                right: 5,
-                child: Container(
-                  padding: const EdgeInsets.all(3),
-                  decoration: const BoxDecoration(
-                    color: Colors.white,
-                    shape: BoxShape.circle,
-                  ),
-                  child: Container(
-                    width: 18,
-                    height: 18,
-                    decoration: BoxDecoration(
-                      color: _getStatusColor(status),
-                      shape: BoxShape.circle,
-                    ),
                   ),
                 ),
               ),
@@ -517,11 +489,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ...languages.asMap().entries.map((entry) {
             int index = entry.key;
             var lang = entry.value;
-            Color chipColor = index == 0
-                ? Colors.green.shade100
-                : index == 1
-                ? Colors.orange.shade100
-                : Colors.blue.shade100;
+
+            final colors = [
+              Colors.green.shade100,
+              Colors.orange.shade100,
+              Colors.blue.shade100,
+            ];
+
+            final Color chipColor = colors[index % colors.length];
+
             return Padding(
               padding: const EdgeInsets.only(bottom: 10),
               child: _buildLanguageChip(lang["language"]!, lang["level"]!, chipColor),
@@ -586,15 +562,4 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  Color _getStatusColor(String status) {
-    switch (status) {
-      case "Online":
-        return Colors.green;
-      case "Busy":
-        return Colors.orange;
-      case "Offline":
-      default:
-        return Colors.grey;
-    }
-  }
 }

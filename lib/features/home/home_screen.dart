@@ -97,7 +97,6 @@ class _HomeScreenState extends State<HomeScreen> {
                       displayName: _currentUser!.displayName,
                       username: _currentUser!.username,
                       bio: _currentUser!.bio ?? "",
-                      status: "Online",
                       country: _currentUser!.country ?? "",
                       age: _currentUser!.age?.toString() ?? "",
                       interests: _currentUser!.interests ?? [],

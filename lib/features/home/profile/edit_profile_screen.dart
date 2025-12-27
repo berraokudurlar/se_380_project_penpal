@@ -12,7 +12,6 @@ class EditProfileScreen extends StatefulWidget {
   final String displayName;
   final String username;
   final String bio;
-  final String status;
   final String country;
   final String age;
   final List<String> interests;
@@ -25,7 +24,6 @@ class EditProfileScreen extends StatefulWidget {
     required this.displayName,
     required this.username,
     required this.bio,
-    required this.status,
     required this.country,
     required this.age,
     required this.interests,
@@ -44,7 +42,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   late TextEditingController _countryController;
   late TextEditingController _ageController;
 
-  late String _status;
   late List<String> _interests;
   late List<Map<String, String>> _languages;
 
@@ -64,7 +61,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     _bioController = TextEditingController(text: widget.bio);
     _countryController = TextEditingController(text: widget.country);
     _ageController = TextEditingController(text: widget.age);
-    _status = widget.status;
     _interests = List<String>.from(widget.interests);
     _languages = List<Map<String, String>>.from(
       widget.languages.map((lang) => Map<String, String>.from(lang)),
@@ -368,34 +364,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             ),
           ),
           const SizedBox(height: 12),
-          DropdownButtonFormField<String>(
-            initialValue: _status,
-            items: const [
-              DropdownMenuItem(value: "Online", child: Text("Online")),
-              DropdownMenuItem(value: "Busy", child: Text("Busy")),
-              DropdownMenuItem(value: "Offline", child: Text("Offline")),
-            ],
-            style: const TextStyle(fontFamily: 'Georgia', color: Colors.black87),
-            decoration: InputDecoration(
-              labelText: "Status",
-              labelStyle: TextStyle(fontFamily: 'Georgia', color: Colors.brown.shade600),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(color: Colors.brown.shade300),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(color: Colors.brown.shade300),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(color: Colors.brown.shade600, width: 2),
-              ),
-            ),
-            onChanged: (val) {
-              if (val != null) setState(() => _status = val);
-            },
-          ),
         ],
       ),
     );
@@ -587,6 +555,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.brown.shade700,
+                  foregroundColor: Colors.white,
+                  textStyle: const TextStyle(
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
                 child: const Text("Add"),
               ),
@@ -790,11 +762,13 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   Widget _buildLanguageItem(int index, Map<String, String> lang) {
-    Color chipColor = index == 0
-        ? Colors.green.shade100
-        : index == 1
-        ? Colors.orange.shade100
-        : Colors.blue.shade100;
+    final colors = [
+      Colors.green.shade100,
+      Colors.orange.shade100,
+      Colors.blue.shade100,
+    ];
+
+    final Color chipColor = colors[index % colors.length];
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -903,7 +877,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.brown.shade700,
-              ),
+                foregroundColor: Colors.white,
+                textStyle: const TextStyle(
+                  fontWeight: FontWeight.w500,
+              )),
               child: const Text("Add"),
             ),
           ],
@@ -966,7 +943,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           'displayName': updatedUser.displayName,
           'username': updatedUser.username,
           'bio': updatedUser.bio,
-          'status': _status,
           'country': updatedUser.country,
           'age': updatedUser.age?.toString() ?? "Hidden",
           'interests': updatedUser.interests,

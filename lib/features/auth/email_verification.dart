@@ -49,7 +49,6 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
               displayName: "",
               username: "",
               bio: "",
-              status: "Online",
               country: "",
               age: "",
               interests: [],
