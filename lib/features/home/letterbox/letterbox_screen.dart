@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:lottie/lottie.dart';
 import 'package:se_380_project_penpal/features/services/letter_service.dart';
 import 'package:se_380_project_penpal/theme/app_theme.dart';
@@ -233,17 +234,23 @@ class _LetterboxScreenState extends State<LetterboxScreen> {
                                 ),
                               ),
                               const SizedBox(height: 24),
-                              Text(
-                                letter.contentText,
-                                style: const TextStyle(
-                                  fontFamily: "Georgia",
-                                  fontSize: 17,
-                                  height: 1.6,
-                                  color: Colors.black87,
-                                  letterSpacing: 0.3,
-                                ),
-                                maxLines: 15,
-                                overflow: TextOverflow.ellipsis,
+                              Html(
+                                data: letter.contentText,
+                                style: {
+                                  "body": Style(
+                                    fontFamily: "Georgia",
+                                    fontSize: FontSize(17),
+                                    lineHeight: LineHeight(1.6),
+                                    color: Colors.black87,
+                                    letterSpacing: 0.3,
+                                    padding: HtmlPaddings.zero,
+                                    maxLines: 15,
+                                    textOverflow: TextOverflow.ellipsis,
+                                  ),
+                                  "p": Style(
+                                    margin: Margins.only(bottom: 8),
+                                    ),
+                                },
                               ),
                             ],
                           ),

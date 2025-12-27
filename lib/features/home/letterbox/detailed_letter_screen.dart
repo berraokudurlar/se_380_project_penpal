@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:se_380_project_penpal/theme/app_theme.dart';
 
 class DetailedLetterScreen extends StatelessWidget {
@@ -171,15 +172,37 @@ class DetailedLetterScreen extends StatelessWidget {
           ),
         ],
       ),
-      child: Text(
-        letter['content'],
-        style: const TextStyle(
-          fontFamily: 'Georgia',
-          fontSize: 17,
-          height: 1.6,
-          color: Colors.black87,
-          letterSpacing: 0.3,
-        ),
+      child: Html(
+        data: letter['content'],
+        style: {
+          "body": Style(
+            fontFamily: 'Georgia',
+            fontSize: FontSize(17),
+            lineHeight: LineHeight(1.6),
+            color: Colors.black87,
+            letterSpacing: 0.3,
+            margin: Margins.zero,
+            padding: HtmlPaddings.zero,
+          ),
+          "p": Style(
+            margin: Margins.only(bottom: 12),
+          ),
+          "strong": Style(
+            fontWeight: FontWeight.bold,
+          ),
+          "em": Style(
+            fontStyle: FontStyle.italic,
+          ),
+          "ul": Style(
+            margin: Margins.only(left: 20, top: 8, bottom: 8),
+          ),
+          "ol": Style(
+            margin: Margins.only(left: 20, top: 8, bottom: 8),
+          ),
+          "li": Style(
+            margin: Margins.only(bottom: 4),
+          ),
+        },
       ),
     );
   }
