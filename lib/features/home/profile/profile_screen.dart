@@ -67,8 +67,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ? (user.country ?? "Unknown")
             : "Hidden";
 
-        age = (user.isAgePublic ?? false && user.age != null)
+        age = (user.isAgePublic ?? false)
+            ? (user.age != null && user.age.toString() != "null"
             ? user.age.toString()
+            : "Unknown")
             : "Hidden";
 
         interests = user.interests ?? [];

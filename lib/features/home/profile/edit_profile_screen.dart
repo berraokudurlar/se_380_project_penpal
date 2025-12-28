@@ -49,6 +49,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   bool isSaving = false;
 
   bool _isCountryPrivate = false;
+  bool _isAgePrivate = false;
 
   @override
   void initState() {
@@ -66,9 +67,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       widget.languages.map((lang) => Map<String, String>.from(lang)),
     );
 
-    if (widget.isFirstSetup) {
-      _loadUserFromFirestore();
-    }
+
+    _loadUserFromFirestore();
   }
 
   Future<void> _loadUserFromFirestore() async {
@@ -89,6 +89,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     setState(() {
       _displayNameController.text = model.displayName;
       _usernameController.text = model.username;
+
+      _countryController.text = model.country ?? "";
+      _ageController.text = model.age?.toString() ?? "";
+
+      _isCountryPrivate = !(model.isCountryPublic ?? true);
+      _isAgePrivate = !(model.isAgePublic ?? true);
     });
   }
 
@@ -667,6 +673,18 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             decoration: InputDecoration(
               labelText: "Age",
               prefixIcon: Icon(Icons.cake_outlined, color: Colors.brown.shade600),
+              suffixIcon: IconButton( tooltip: _isAgePrivate
+                  ? "Only visible to you"
+                  : "Visible to everyone",
+                icon: Icon(
+                  _isAgePrivate ? Icons.lock : Icons.visibility,
+                  color: Colors.brown.shade600,
+                ),
+                onPressed: () {
+                  setState(() {
+                    _isAgePrivate = !_isAgePrivate;
+                  });
+                },),
               labelStyle: TextStyle(fontFamily: 'Georgia', color: Colors.brown.shade600),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
@@ -911,8 +929,18 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         displayName: _displayNameController.text.trim(),
         username: _usernameController.text.trim(),
         bio: _bioController.text.trim(),
-        country: _countryController.text.trim(),
-        age: int.tryParse(_ageController.text),
+
+        country: _countryController.text.trim().isEmpty
+            ? null
+            : _countryController.text.trim(),
+
+        age: _ageController.text.trim().isEmpty
+            ? null
+            : int.tryParse(_ageController.text),
+
+        isCountryPublic: !_isCountryPrivate,
+        isAgePublic: !_isAgePrivate,
+
         interests: _interests,
         languages: _languages,
         lastActive: DateTime.now(),
@@ -944,7 +972,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           'username': updatedUser.username,
           'bio': updatedUser.bio,
           'country': updatedUser.country,
-          'age': updatedUser.age?.toString() ?? "Hidden",
+          'age': updatedUser.age?.toString(),
           'interests': updatedUser.interests,
           'languages': _languages,
         });
