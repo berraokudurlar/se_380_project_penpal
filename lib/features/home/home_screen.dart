@@ -23,13 +23,14 @@ class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
   final UserService _userService = UserService();
   UserModel? _currentUser;
-  Key _profileKey = UniqueKey();
+
+  final ValueNotifier<int> _profileRefreshNotifier = ValueNotifier<int>(0);
 
   List<Widget> get _pages => [
     LetterboxScreen(),
     FriendsScreen(),
     WriteLetterScreen(),
-    ProfileScreen(key: _profileKey),
+    ProfileScreen(refreshNotifier: _profileRefreshNotifier,),
   ];
 
 
@@ -90,7 +91,7 @@ class _HomeScreenState extends State<HomeScreen> {
             child: InkWell(
               borderRadius: BorderRadius.circular(12),
               onTap: () async {
-                await Navigator.push(
+                final result=await Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (_) => EditProfileScreen(
@@ -105,12 +106,12 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 );
 
-                // Edit sonrası profili yeniden çek
-                //_loadUser();
-                await _loadUser();
-                setState(() {
-                  _profileKey = UniqueKey();
-                });
+                // Edit sonrası
+                if (result != null) {
+                  await _loadUser();
+                  _profileRefreshNotifier.value++;
+                }
+
               },
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),

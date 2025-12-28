@@ -5,7 +5,12 @@ import 'edit_profile_screen.dart';
 import '../../../models/user_model.dart';
 
 class ProfileScreen extends StatefulWidget {
-  const ProfileScreen({super.key});
+  final ValueNotifier<int> refreshNotifier;
+
+  const ProfileScreen({
+    super.key,
+    required this.refreshNotifier,
+  });
 
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
@@ -33,6 +38,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void initState() {
     super.initState();
     _loadUser();
+
+    widget.refreshNotifier.addListener(_onRefresh);
+  }
+  void _onRefresh() {
+    _loadUser();
+  }
+  void dispose() {
+    widget.refreshNotifier.removeListener(_onRefresh);
+    super.dispose();
   }
 
   Future<void> _loadUser() async {
