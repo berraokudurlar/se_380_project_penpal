@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:se_380_project_penpal/theme/app_theme.dart';
+import 'package:se_380_project_penpal/features/services/keypals_service.dart';
+import 'package:se_380_project_penpal/models/user_model.dart';
 
 class AddFriendScreen extends StatefulWidget {
   const AddFriendScreen({super.key});
@@ -10,7 +12,10 @@ class AddFriendScreen extends StatefulWidget {
 
 class _AddFriendScreenState extends State<AddFriendScreen> {
   final TextEditingController searchController = TextEditingController();
-  List<Map<String, dynamic>> searchResults = [];
+  final KeyPalsService _friendService = KeyPalsService();
+
+  List<UserModel> searchResults = [];
+  Map<String, String> friendshipStatuses = {}; // userId -> status
   bool isSearching = false;
 
   @override
@@ -25,57 +30,69 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
 
     setState(() {
       isSearching = true;
+      searchResults = [];
+      friendshipStatuses = {};
     });
 
-    // TODO: Replace with actual Firestore search
-    // QuerySnapshot results = await FirebaseFirestore.instance
-    //   .collection('users')
-    //   .where('username', isGreaterThanOrEqualTo: query)
-    //   .where('username', isLessThanOrEqualTo: query + '\uf8ff')
-    //   .get();
+    try {
+      final results = await _friendService.searchUsers(query);
 
-    // Simulated search results for now
-    await Future.delayed(const Duration(milliseconds: 500));
+      // Get friendship status for each result
+      for (var user in results) {
+        final status = await _friendService.getFriendshipStatus(user.userId);
+        friendshipStatuses[user.userId] = status;
+      }
 
-    setState(() {
-      searchResults = [
-        {
-          'userId': '1',
-          'username': 'bookworm_jane',
-          'displayName': 'Jane Smith',
-          'bio': 'Love reading classic novels and drinking tea',
-          'country': 'UK',
-          'interests': ['Reading', 'Tea', 'Writing'],
-        },
-        {
-          'userId': '2',
-          'username': 'traveler_tom',
-          'displayName': 'Tom Wilson',
-          'bio': 'Exploring the world one letter at a time',
-          'country': 'USA',
-          'interests': ['Traveling', 'Photography'],
-        },
-      ];
-      isSearching = false;
-    });
+      if (mounted) {
+        setState(() {
+          searchResults = results;
+          isSearching = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          isSearching = false;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Search failed: $e"),
+            backgroundColor: Colors.red.shade700,
+          ),
+        );
+      }
+    }
   }
 
-  void _sendFriendRequest(Map<String, dynamic> user) async {
-    // TODO: Send friend request to Firestore
-    // await FirebaseFirestore.instance.collection('friendRequests').add({
-    //   'from': currentUserId,
-    //   'to': user['userId'],
-    //   'status': 'pending',
-    //   'createdAt': FieldValue.serverTimestamp(),
-    // });
+  Future<void> _sendFriendRequest(UserModel user) async {
+    try {
+      await _friendService.sendFriendRequest(user.userId);
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text("Key Pal request sent to ${user['displayName']}! 📬"),
-        backgroundColor: Colors.green.shade700,
-        behavior: SnackBarBehavior.floating,
-      ),
-    );
+      // Update status
+      setState(() {
+        friendshipStatuses[user.userId] = 'request_sent';
+      });
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Key Pal request sent to ${user.displayName}! 📬"),
+            backgroundColor: Colors.green.shade700,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(e.toString().replaceAll('Exception: ', '')),
+            backgroundColor: Colors.red.shade700,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+    }
   }
 
   @override
@@ -85,6 +102,10 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: AppColors.textDark),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
         title: const Text(
           'Add Key Pal',
           style: TextStyle(
@@ -101,12 +122,8 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
           children: [
             // Search bar
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.brown.shade300, width: 1.5),
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              // --- UPDATED: Removed BoxDecoration ---
               child: Row(
                 children: [
                   Icon(Icons.search, color: Colors.brown.shade600),
@@ -117,6 +134,7 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
                       style: const TextStyle(
                         fontFamily: 'Georgia',
                         fontSize: 16,
+                        color: AppColors.textDark, // Ensure text is visible
                       ),
                       decoration: InputDecoration(
                         hintText: 'Search by username...',
@@ -212,7 +230,8 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
                     itemCount: searchResults.length,
                     itemBuilder: (context, index) {
                       final user = searchResults[index];
-                      return _buildUserCard(user);
+                      final status = friendshipStatuses[user.userId] ?? 'loading';
+                      return _buildUserCard(user, status);
                     },
                   ),
                 ),
@@ -222,7 +241,7 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
     );
   }
 
-  Widget _buildUserCard(Map<String, dynamic> user) {
+  Widget _buildUserCard(UserModel user, String friendshipStatus) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
@@ -260,7 +279,7 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      user['displayName'],
+                      user.displayName,
                       style: const TextStyle(
                         fontFamily: 'Georgia',
                         fontSize: 18,
@@ -269,7 +288,7 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
                       ),
                     ),
                     Text(
-                      '@${user['username']}',
+                      '@${user.username}',
                       style: TextStyle(
                         fontFamily: 'Georgia',
                         fontSize: 14,
@@ -277,31 +296,33 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
                         fontStyle: FontStyle.italic,
                       ),
                     ),
-                    const SizedBox(height: 4),
-                    Row(
-                      children: [
-                        Icon(Icons.public, size: 14, color: Colors.brown.shade500),
-                        const SizedBox(width: 4),
-                        Text(
-                          user['country'],
-                          style: TextStyle(
-                            fontFamily: 'Georgia',
-                            fontSize: 13,
-                            color: Colors.brown.shade500,
+                    if (user.country != null && user.country!.isNotEmpty) ...[
+                      const SizedBox(height: 4),
+                      Row(
+                        children: [
+                          Icon(Icons.public, size: 14, color: Colors.brown.shade500),
+                          const SizedBox(width: 4),
+                          Text(
+                            user.country!,
+                            style: TextStyle(
+                              fontFamily: 'Georgia',
+                              fontSize: 13,
+                              color: Colors.brown.shade500,
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
+                        ],
+                      ),
+                    ],
                   ],
                 ),
               ),
             ],
           ),
 
-          if (user['bio'] != null && user['bio'].isNotEmpty) ...[
+          if (user.bio != null && user.bio!.isNotEmpty) ...[
             const SizedBox(height: 12),
             Text(
-              user['bio'],
+              user.bio!,
               style: TextStyle(
                 fontFamily: 'Georgia',
                 fontSize: 14,
@@ -314,12 +335,12 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
           ],
 
           // Interests
-          if (user['interests'] != null && user['interests'].isNotEmpty) ...[
+          if (user.interests != null && user.interests!.isNotEmpty) ...[
             const SizedBox(height: 12),
             Wrap(
               spacing: 6,
               runSpacing: 6,
-              children: (user['interests'] as List).take(3).map((interest) {
+              children: (user.interests!).take(3).map((interest) {
                 return Container(
                   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                   decoration: BoxDecoration(
@@ -342,52 +363,138 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
 
           const SizedBox(height: 16),
 
-          // Buttons
-          Row(
+          // Action buttons based on friendship status
+          _buildActionButtons(user, friendshipStatus),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildActionButtons(UserModel user, String status) {
+    switch (status) {
+      case 'friends':
+        return Container(
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          decoration: BoxDecoration(
+            color: Colors.green.shade50,
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: Colors.green.shade300),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Expanded(
-                child: OutlinedButton.icon(
-                  onPressed: () {
-                    // TODO: Navigate to view profile
-                  },
-                  icon: Icon(Icons.person_outline, size: 18, color: Colors.brown.shade700),
-                  label: Text(
-                    'View Profile',
-                    style: TextStyle(
-                      fontFamily: 'Georgia',
-                      color: Colors.brown.shade700,
-                    ),
-                  ),
-                  style: OutlinedButton.styleFrom(
-                    side: BorderSide(color: Colors.brown.shade300, width: 1.5),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                ),
-              ),
+              Icon(Icons.check_circle, size: 18, color: Colors.green.shade700),
               const SizedBox(width: 8),
-              Expanded(
-                child: ElevatedButton.icon(
-                  onPressed: () => _sendFriendRequest(user),
-                  icon: const Icon(Icons.person_add, size: 18),
-                  label: const Text(
-                    'Add Key Pal',
-                    style: TextStyle(fontFamily: 'Georgia'),
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.brown.shade700,
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
+              Text(
+                'Already Key Pals',
+                style: TextStyle(
+                  fontFamily: 'Georgia',
+                  color: Colors.green.shade700,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
             ],
           ),
-        ],
-      ),
-    );
+        );
+
+      case 'request_sent':
+        return Container(
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          decoration: BoxDecoration(
+            color: Colors.orange.shade50,
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: Colors.orange.shade300),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.schedule, size: 18, color: Colors.orange.shade700),
+              const SizedBox(width: 8),
+              Text(
+                'Request Sent',
+                style: TextStyle(
+                  fontFamily: 'Georgia',
+                  color: Colors.orange.shade700,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+        );
+
+      case 'request_received':
+        return Container(
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          decoration: BoxDecoration(
+            color: Colors.blue.shade50,
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: Colors.blue.shade300),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.mail, size: 18, color: Colors.blue.shade700),
+              const SizedBox(width: 8),
+              Text(
+                'Check Pending Requests',
+                style: TextStyle(
+                  fontFamily: 'Georgia',
+                  color: Colors.blue.shade700,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+        );
+
+      case 'not_friends':
+      default:
+        return Row(
+          children: [
+            Expanded(
+              child: ElevatedButton.icon(
+                onPressed: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Profile view coming soon!')),
+                  );
+                },
+                icon: const Icon(Icons.person_outline, size: 18),
+                label: const Text(
+                  'View Profile',
+                  style: TextStyle(
+                    fontFamily: 'Georgia',
+                  ),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.brown.shade400,
+                  foregroundColor: Colors.white,
+                  elevation: 0,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: ElevatedButton.icon(
+                onPressed: () => _sendFriendRequest(user),
+                icon: const Icon(Icons.person_add, size: 18),
+                label: const Text(
+                  'Add Key Pal',
+                  style: TextStyle(fontFamily: 'Georgia'),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.brown.shade700,
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        );
+    }
   }
 }
