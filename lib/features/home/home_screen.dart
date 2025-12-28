@@ -271,11 +271,6 @@ class _HomeScreenState extends State<HomeScreen> {
       body: Container(
         decoration: const BoxDecoration(
           color: AppColors.background,
-          image: DecorationImage(
-            image: AssetImage('assets/textures/textured_paper.png'),
-            repeat: ImageRepeat.repeat,
-            opacity: 0.25,
-          ),
         ),
         child: AnimatedSwitcher(
           duration: const Duration(milliseconds: 250),

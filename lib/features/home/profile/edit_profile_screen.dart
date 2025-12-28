@@ -955,7 +955,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: const Text("Profile saved successfully ✨"),
+          content: const Text("Your changes were saved."),
           backgroundColor: Colors.green.shade700,
           behavior: SnackBarBehavior.floating,
         ),

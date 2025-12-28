@@ -212,7 +212,8 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          'Enter a username to find new friends',
+                          'Enter a username to find people to exchange letters with.',
+                          textAlign: TextAlign.center,
                           style: TextStyle(
                             fontFamily: 'Georgia',
                             fontSize: 14,

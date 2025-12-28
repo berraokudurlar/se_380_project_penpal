@@ -55,9 +55,8 @@ class _LetterSentScreenState extends State<LetterSentScreen> {
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontFamily: 'Georgia',
-                    fontSize: 32,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.brown.shade800,
+                    fontSize: 24,
+                    color: Colors.brown.shade600,
                     height: 1.2,
                   ),
                 ),
@@ -90,7 +89,7 @@ class _LetterSentScreenState extends State<LetterSentScreen> {
                     style: TextStyle(
                       fontFamily: 'Georgia',
                       fontSize: 16,
-                      color: Colors.brown.shade700,
+                      color: Colors.brown.shade600,
                     ),
                   ),
                 ),

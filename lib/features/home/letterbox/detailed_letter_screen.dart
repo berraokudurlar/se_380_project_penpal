@@ -218,7 +218,7 @@ class DetailedLetterScreen extends StatelessWidget {
           Navigator.pop(context);
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Replying to ${letter['from']}...'),
+              content: Text('We will implement this!!!!!!'),
               backgroundColor: Colors.green.shade700,
             ),
           );
@@ -259,21 +259,21 @@ class DetailedLetterScreen extends StatelessWidget {
       builder: (context) => AlertDialog(
         title: const Text(
           'Delete Letter?',
-          style: TextStyle(fontFamily: 'Georgia'),
+          style: TextStyle(color: Colors.brown, fontFamily: 'Georgia'),
         ),
         content: const Text(
           'This letter will be permanently deleted.',
-          style: TextStyle(fontFamily: 'Georgia'),
+          style: TextStyle(color: Colors.brown, fontFamily: 'Georgia'),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
             child: Text(
               'Cancel',
-              style: TextStyle(color: Colors.brown.shade600),
+              style: TextStyle(color: Colors.brown.shade600, fontFamily: 'Georgia'),
             ),
           ),
-          ElevatedButton(
+          TextButton(
             onPressed: () {
               // TODO: Delete from Firestore
               Navigator.pop(context); // Close dialog
@@ -283,9 +283,11 @@ class DetailedLetterScreen extends StatelessWidget {
               );
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red.shade700,
+              backgroundColor: Colors.transparent
             ),
-            child: const Text('Delete'),
+            child: Text('Delete',
+            style: TextStyle(color: Colors.brown.shade600, fontFamily: 'Georgia'),
+            )
           ),
         ],
       ),
