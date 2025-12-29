@@ -26,19 +26,7 @@ class DetailedLetterScreen extends StatelessWidget {
           ),
         ),
         actions: [
-          // Reply button
-          IconButton(
-            icon: Icon(Icons.reply, color: Colors.brown.shade700),
-            onPressed: () {
-              // TODO: Navigate to WriteLetterScreen with recipient pre-filled
-              Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Opening reply screen...')),
-              );
-            },
-            tooltip: 'Reply',
-          ),
-          // More options
+
           PopupMenuButton(
             icon: Icon(Icons.more_vert, color: Colors.brown.shade700),
             itemBuilder: (context) => [
@@ -157,6 +145,9 @@ class DetailedLetterScreen extends StatelessWidget {
 
   Widget _buildLetterContent() {
     return Container(
+      constraints: const BoxConstraints(
+        minHeight: 400,
+      ),
       padding: const EdgeInsets.all(28),
       decoration: BoxDecoration(
         image: const DecorationImage(
