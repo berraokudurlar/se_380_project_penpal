@@ -2,6 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:se_380_project_penpal/models/letter_model.dart';
 
+import 'letter_delivery_service.dart';
+
 
 
 class LetterService {
@@ -24,7 +26,11 @@ class LetterService {
       final senderDoc =
       await _firestore.collection('users').doc(senderId).get();
 
-      final senderCountry = senderDoc.data()?['country'];
+
+      final senderCountryCode = senderDoc.data()?['countryCode'];
+
+
+
       // Find receiver by username
       final receiverQuery = await _firestore
           .collection('users')
@@ -36,11 +42,30 @@ class LetterService {
         throw Exception("User '$receiverUsername' not found");
       }
 
-      final receiverId = receiverQuery.docs.first.id;
+      final receiverDoc = receiverQuery.docs.first;
+      final receiverId = receiverDoc.id;
+
+      final receiverCountryCode = receiverDoc.data()['countryCode'];
+
+
+      //Arrival Time
+      final now = DateTime.now();
+      final int arrivalDays =
+      LetterDeliveryService.calculateArrivalDays(
+        senderCountryCode: senderCountryCode,
+        receiverCountryCode: receiverCountryCode,
+      );
+
+      final DateTime estimatedArrivalDate =
+      now.add(Duration(days: arrivalDays));
+
+
+
+
 
       // Create letter document reference
       final letterRef = _firestore.collection('letters').doc();
-      final now = DateTime.now();
+
 
       // Create the letter model
       final letter = LetterModel(
@@ -48,11 +73,16 @@ class LetterService {
         senderId: senderId,
         receiverId: receiverId,
         sentDate: now,
+        estimatedArrivalDays: arrivalDays,
+        estimatedArrivalDate: estimatedArrivalDate,
         status: 'sent',
         contentText: contentText,
-        locationSentFrom:senderCountry,
+        locationSentFrom:senderCountryCode,
+        locationReceived:receiverCountryCode,
         customizations: contentHtml != null ? {'html': contentHtml} : null,
       );
+      
+
 
       // Use batch write for atomic operation
       final batch = _firestore.batch();
@@ -118,22 +148,6 @@ class LetterService {
     });
   }
 
- /* /// Get sender info for a letter
-  Future<Map<String, dynamic>?> getSenderInfo(String senderId) async {
-    try {
-      final doc = await _firestore.collection('users').doc(senderId).get();
-      if (!doc.exists) return null;
-
-      final data = doc.data()!;
-      return {
-        'displayName': data['displayName'] ?? 'Unknown',
-        'username': data['username'] ?? 'unknown',
-      };
-    } catch (e) {
-      print("Error getting sender info: $e");
-      return null;
-    }
-  }*/
 
   /// Get basic public user info by userId
   Future<Map<String, dynamic>?> getUserBasicInfo(String userId) async {
