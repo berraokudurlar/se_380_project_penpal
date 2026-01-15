@@ -28,10 +28,10 @@ mixin _$LetterModel {
   DateTime? get receivedDate => throw _privateConstructorUsedError;
   String get status =>
       throw _privateConstructorUsedError; // draft, sent, scheduled, delivered?
+  DateTime? get estimatedArrivalDate => throw _privateConstructorUsedError;
+  int? get estimatedArrivalDays => throw _privateConstructorUsedError;
   String? get locationSentFrom => throw _privateConstructorUsedError;
   String? get locationReceived => throw _privateConstructorUsedError;
-  double? get distanceKm => throw _privateConstructorUsedError;
-  double? get deliveryTimeHours => throw _privateConstructorUsedError;
   String get contentText => throw _privateConstructorUsedError;
   Map<String, dynamic>? get customizations =>
       throw _privateConstructorUsedError;
@@ -64,10 +64,10 @@ abstract class $LetterModelCopyWith<$Res> {
     DateTime sentDate,
     DateTime? receivedDate,
     String status,
+    DateTime? estimatedArrivalDate,
+    int? estimatedArrivalDays,
     String? locationSentFrom,
     String? locationReceived,
-    double? distanceKm,
-    double? deliveryTimeHours,
     String contentText,
     Map<String, dynamic>? customizations,
     List<String>? attachments,
@@ -98,10 +98,10 @@ class _$LetterModelCopyWithImpl<$Res, $Val extends LetterModel>
     Object? sentDate = null,
     Object? receivedDate = freezed,
     Object? status = null,
+    Object? estimatedArrivalDate = freezed,
+    Object? estimatedArrivalDays = freezed,
     Object? locationSentFrom = freezed,
     Object? locationReceived = freezed,
-    Object? distanceKm = freezed,
-    Object? deliveryTimeHours = freezed,
     Object? contentText = null,
     Object? customizations = freezed,
     Object? attachments = freezed,
@@ -135,6 +135,14 @@ class _$LetterModelCopyWithImpl<$Res, $Val extends LetterModel>
                 ? _value.status
                 : status // ignore: cast_nullable_to_non_nullable
                       as String,
+            estimatedArrivalDate: freezed == estimatedArrivalDate
+                ? _value.estimatedArrivalDate
+                : estimatedArrivalDate // ignore: cast_nullable_to_non_nullable
+                      as DateTime?,
+            estimatedArrivalDays: freezed == estimatedArrivalDays
+                ? _value.estimatedArrivalDays
+                : estimatedArrivalDays // ignore: cast_nullable_to_non_nullable
+                      as int?,
             locationSentFrom: freezed == locationSentFrom
                 ? _value.locationSentFrom
                 : locationSentFrom // ignore: cast_nullable_to_non_nullable
@@ -143,14 +151,6 @@ class _$LetterModelCopyWithImpl<$Res, $Val extends LetterModel>
                 ? _value.locationReceived
                 : locationReceived // ignore: cast_nullable_to_non_nullable
                       as String?,
-            distanceKm: freezed == distanceKm
-                ? _value.distanceKm
-                : distanceKm // ignore: cast_nullable_to_non_nullable
-                      as double?,
-            deliveryTimeHours: freezed == deliveryTimeHours
-                ? _value.deliveryTimeHours
-                : deliveryTimeHours // ignore: cast_nullable_to_non_nullable
-                      as double?,
             contentText: null == contentText
                 ? _value.contentText
                 : contentText // ignore: cast_nullable_to_non_nullable
@@ -197,10 +197,10 @@ abstract class _$$LetterModelImplCopyWith<$Res>
     DateTime sentDate,
     DateTime? receivedDate,
     String status,
+    DateTime? estimatedArrivalDate,
+    int? estimatedArrivalDays,
     String? locationSentFrom,
     String? locationReceived,
-    double? distanceKm,
-    double? deliveryTimeHours,
     String contentText,
     Map<String, dynamic>? customizations,
     List<String>? attachments,
@@ -230,10 +230,10 @@ class __$$LetterModelImplCopyWithImpl<$Res>
     Object? sentDate = null,
     Object? receivedDate = freezed,
     Object? status = null,
+    Object? estimatedArrivalDate = freezed,
+    Object? estimatedArrivalDays = freezed,
     Object? locationSentFrom = freezed,
     Object? locationReceived = freezed,
-    Object? distanceKm = freezed,
-    Object? deliveryTimeHours = freezed,
     Object? contentText = null,
     Object? customizations = freezed,
     Object? attachments = freezed,
@@ -267,6 +267,14 @@ class __$$LetterModelImplCopyWithImpl<$Res>
             ? _value.status
             : status // ignore: cast_nullable_to_non_nullable
                   as String,
+        estimatedArrivalDate: freezed == estimatedArrivalDate
+            ? _value.estimatedArrivalDate
+            : estimatedArrivalDate // ignore: cast_nullable_to_non_nullable
+                  as DateTime?,
+        estimatedArrivalDays: freezed == estimatedArrivalDays
+            ? _value.estimatedArrivalDays
+            : estimatedArrivalDays // ignore: cast_nullable_to_non_nullable
+                  as int?,
         locationSentFrom: freezed == locationSentFrom
             ? _value.locationSentFrom
             : locationSentFrom // ignore: cast_nullable_to_non_nullable
@@ -275,14 +283,6 @@ class __$$LetterModelImplCopyWithImpl<$Res>
             ? _value.locationReceived
             : locationReceived // ignore: cast_nullable_to_non_nullable
                   as String?,
-        distanceKm: freezed == distanceKm
-            ? _value.distanceKm
-            : distanceKm // ignore: cast_nullable_to_non_nullable
-                  as double?,
-        deliveryTimeHours: freezed == deliveryTimeHours
-            ? _value.deliveryTimeHours
-            : deliveryTimeHours // ignore: cast_nullable_to_non_nullable
-                  as double?,
         contentText: null == contentText
             ? _value.contentText
             : contentText // ignore: cast_nullable_to_non_nullable
@@ -322,10 +322,10 @@ class _$LetterModelImpl implements _LetterModel {
     required this.sentDate,
     this.receivedDate,
     this.status = 'draft',
+    this.estimatedArrivalDate,
+    this.estimatedArrivalDays,
     this.locationSentFrom,
     this.locationReceived,
-    this.distanceKm,
-    this.deliveryTimeHours,
     required this.contentText,
     final Map<String, dynamic>? customizations,
     final List<String>? attachments,
@@ -353,13 +353,13 @@ class _$LetterModelImpl implements _LetterModel {
   final String status;
   // draft, sent, scheduled, delivered?
   @override
+  final DateTime? estimatedArrivalDate;
+  @override
+  final int? estimatedArrivalDays;
+  @override
   final String? locationSentFrom;
   @override
   final String? locationReceived;
-  @override
-  final double? distanceKm;
-  @override
-  final double? deliveryTimeHours;
   @override
   final String contentText;
   final Map<String, dynamic>? _customizations;
@@ -392,7 +392,7 @@ class _$LetterModelImpl implements _LetterModel {
 
   @override
   String toString() {
-    return 'LetterModel(letterId: $letterId, senderId: $senderId, receiverId: $receiverId, sentDate: $sentDate, receivedDate: $receivedDate, status: $status, locationSentFrom: $locationSentFrom, locationReceived: $locationReceived, distanceKm: $distanceKm, deliveryTimeHours: $deliveryTimeHours, contentText: $contentText, customizations: $customizations, attachments: $attachments, isEncrypted: $isEncrypted, replyToLetterId: $replyToLetterId, deleted: $deleted)';
+    return 'LetterModel(letterId: $letterId, senderId: $senderId, receiverId: $receiverId, sentDate: $sentDate, receivedDate: $receivedDate, status: $status, estimatedArrivalDate: $estimatedArrivalDate, estimatedArrivalDays: $estimatedArrivalDays, locationSentFrom: $locationSentFrom, locationReceived: $locationReceived, contentText: $contentText, customizations: $customizations, attachments: $attachments, isEncrypted: $isEncrypted, replyToLetterId: $replyToLetterId, deleted: $deleted)';
   }
 
   @override
@@ -411,14 +411,14 @@ class _$LetterModelImpl implements _LetterModel {
             (identical(other.receivedDate, receivedDate) ||
                 other.receivedDate == receivedDate) &&
             (identical(other.status, status) || other.status == status) &&
+            (identical(other.estimatedArrivalDate, estimatedArrivalDate) ||
+                other.estimatedArrivalDate == estimatedArrivalDate) &&
+            (identical(other.estimatedArrivalDays, estimatedArrivalDays) ||
+                other.estimatedArrivalDays == estimatedArrivalDays) &&
             (identical(other.locationSentFrom, locationSentFrom) ||
                 other.locationSentFrom == locationSentFrom) &&
             (identical(other.locationReceived, locationReceived) ||
                 other.locationReceived == locationReceived) &&
-            (identical(other.distanceKm, distanceKm) ||
-                other.distanceKm == distanceKm) &&
-            (identical(other.deliveryTimeHours, deliveryTimeHours) ||
-                other.deliveryTimeHours == deliveryTimeHours) &&
             (identical(other.contentText, contentText) ||
                 other.contentText == contentText) &&
             const DeepCollectionEquality().equals(
@@ -446,10 +446,10 @@ class _$LetterModelImpl implements _LetterModel {
     sentDate,
     receivedDate,
     status,
+    estimatedArrivalDate,
+    estimatedArrivalDays,
     locationSentFrom,
     locationReceived,
-    distanceKm,
-    deliveryTimeHours,
     contentText,
     const DeepCollectionEquality().hash(_customizations),
     const DeepCollectionEquality().hash(_attachments),
@@ -480,10 +480,10 @@ abstract class _LetterModel implements LetterModel {
     required final DateTime sentDate,
     final DateTime? receivedDate,
     final String status,
+    final DateTime? estimatedArrivalDate,
+    final int? estimatedArrivalDays,
     final String? locationSentFrom,
     final String? locationReceived,
-    final double? distanceKm,
-    final double? deliveryTimeHours,
     required final String contentText,
     final Map<String, dynamic>? customizations,
     final List<String>? attachments,
@@ -508,13 +508,13 @@ abstract class _LetterModel implements LetterModel {
   @override
   String get status; // draft, sent, scheduled, delivered?
   @override
+  DateTime? get estimatedArrivalDate;
+  @override
+  int? get estimatedArrivalDays;
+  @override
   String? get locationSentFrom;
   @override
   String? get locationReceived;
-  @override
-  double? get distanceKm;
-  @override
-  double? get deliveryTimeHours;
   @override
   String get contentText;
   @override

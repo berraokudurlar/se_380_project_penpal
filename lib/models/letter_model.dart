@@ -13,10 +13,14 @@ class LetterModel with _$LetterModel {
     DateTime? receivedDate,
     @Default('draft') String status, // draft, sent, scheduled, delivered?
 
+    DateTime? estimatedArrivalDate,
+    int? estimatedArrivalDays,
+
+
     String? locationSentFrom,
     String? locationReceived,
-    double? distanceKm,
-    double? deliveryTimeHours,
+
+
 
     required String contentText,
     Map<String, dynamic>? customizations,

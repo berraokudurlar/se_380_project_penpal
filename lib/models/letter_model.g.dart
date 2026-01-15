@@ -16,10 +16,12 @@ _$LetterModelImpl _$$LetterModelImplFromJson(Map<String, dynamic> json) =>
           ? null
           : DateTime.parse(json['receivedDate'] as String),
       status: json['status'] as String? ?? 'draft',
+      estimatedArrivalDate: json['estimatedArrivalDate'] == null
+          ? null
+          : DateTime.parse(json['estimatedArrivalDate'] as String),
+      estimatedArrivalDays: (json['estimatedArrivalDays'] as num?)?.toInt(),
       locationSentFrom: json['locationSentFrom'] as String?,
       locationReceived: json['locationReceived'] as String?,
-      distanceKm: (json['distanceKm'] as num?)?.toDouble(),
-      deliveryTimeHours: (json['deliveryTimeHours'] as num?)?.toDouble(),
       contentText: json['contentText'] as String,
       customizations: json['customizations'] as Map<String, dynamic>?,
       attachments: (json['attachments'] as List<dynamic>?)
@@ -38,10 +40,10 @@ Map<String, dynamic> _$$LetterModelImplToJson(_$LetterModelImpl instance) =>
       'sentDate': instance.sentDate.toIso8601String(),
       'receivedDate': instance.receivedDate?.toIso8601String(),
       'status': instance.status,
+      'estimatedArrivalDate': instance.estimatedArrivalDate?.toIso8601String(),
+      'estimatedArrivalDays': instance.estimatedArrivalDays,
       'locationSentFrom': instance.locationSentFrom,
       'locationReceived': instance.locationReceived,
-      'distanceKm': instance.distanceKm,
-      'deliveryTimeHours': instance.deliveryTimeHours,
       'contentText': instance.contentText,
       'customizations': instance.customizations,
       'attachments': instance.attachments,

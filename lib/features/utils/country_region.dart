@@ -1,0 +1,90 @@
+enum Region {
+  europe,
+  asia,
+  africa,
+  northAmerica,
+  southAmerica,
+  oceania,
+  middleEast,
+}
+const Map<String, Region> countryRegionMap = {
+  // EUROPE
+  'TR': Region.europe,
+  'DE': Region.europe,
+  'FR': Region.europe,
+  'IT': Region.europe,
+  'ES': Region.europe,
+  'NL': Region.europe,
+  'BE': Region.europe,
+  'CH': Region.europe,
+  'AT': Region.europe,
+  'SE': Region.europe,
+  'NO': Region.europe,
+  'FI': Region.europe,
+  'DK': Region.europe,
+  'PL': Region.europe,
+  'CZ': Region.europe,
+  'HU': Region.europe,
+  'RO': Region.europe,
+  'BG': Region.europe,
+  'GR': Region.europe,
+  'PT': Region.europe,
+  'IE': Region.europe,
+  'GB': Region.europe,
+  'UA': Region.europe,
+
+  //ASIA
+  'JP': Region.asia,
+  'CN': Region.asia,
+  'KR': Region.asia,
+  'IN': Region.asia,
+  'PK': Region.asia,
+  'BD': Region.asia,
+  'TH': Region.asia,
+  'VN': Region.asia,
+  'MY': Region.asia,
+  'ID': Region.asia,
+  'PH': Region.asia,
+  'SG': Region.asia,
+
+  //MIDDLE EAST
+  'AE': Region.middleEast,
+  'SA': Region.middleEast,
+  'QA': Region.middleEast,
+  'KW': Region.middleEast,
+  'OM': Region.middleEast,
+  'BH': Region.middleEast,
+  'IL': Region.middleEast,
+  'JO': Region.middleEast,
+  'LB': Region.middleEast,
+  'IQ': Region.middleEast,
+  'IR': Region.middleEast,
+  'SY': Region.middleEast,
+
+  //NORTH AMERICA
+  'US': Region.northAmerica,
+  'CA': Region.northAmerica,
+  'MX': Region.northAmerica,
+
+  //SOUTH AMERICA
+  'BR': Region.southAmerica,
+  'AR': Region.southAmerica,
+  'CL': Region.southAmerica,
+  'CO': Region.southAmerica,
+  'PE': Region.southAmerica,
+  'VE': Region.southAmerica,
+
+  //AFRICA
+  'EG': Region.africa,
+  'ZA': Region.africa,
+  'NG': Region.africa,
+  'KE': Region.africa,
+  'ET': Region.africa,
+  'MA': Region.africa,
+  'DZ': Region.africa,
+  'TN': Region.africa,
+
+  //OCEANIA
+  'AU': Region.oceania,
+  'NZ': Region.oceania,
+};

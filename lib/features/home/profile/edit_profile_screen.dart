@@ -53,6 +53,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   bool _isCountryPrivate = false;
   bool _isAgePrivate = false;
 
+  String? _selectedCountryCode;
+
   @override
   void initState() {
     super.initState();
@@ -93,6 +95,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       _usernameController.text = model.username;
 
       _countryController.text = model.country ?? "";
+      _selectedCountryCode = model.countryCode;
+
       _ageController.text = model.age?.toString() ?? "";
 
       _isCountryPrivate = !(model.isCountryPublic ?? true);
@@ -118,6 +122,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       onSelect: (Country country) {
         setState(() {
           _countryController.text = country.name;
+          _selectedCountryCode = country.countryCode;
         });
       },
     );
@@ -648,6 +653,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           const SizedBox(height: 16),
           TextField(
             controller: _countryController,
+            readOnly: true,
+            onTap: _openCountryPicker,
+
             style: const TextStyle(fontFamily: 'Georgia'),
             decoration: InputDecoration(
               labelText: "Country",
@@ -948,6 +956,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         country: _countryController.text.trim().isEmpty
             ? null
             : _countryController.text.trim(),
+
+        countryCode: _selectedCountryCode,
+
 
         age: _ageController.text.trim().isEmpty
             ? null

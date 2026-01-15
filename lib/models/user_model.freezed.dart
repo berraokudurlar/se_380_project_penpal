@@ -30,6 +30,7 @@ mixin _$UserModel {
   DateTime? get lastActive => throw _privateConstructorUsedError;
   bool? get isVerified => throw _privateConstructorUsedError;
   String? get country => throw _privateConstructorUsedError;
+  String? get countryCode => throw _privateConstructorUsedError;
   bool? get isCountryPublic => throw _privateConstructorUsedError;
   int? get age => throw _privateConstructorUsedError;
   bool? get isAgePublic => throw _privateConstructorUsedError;
@@ -69,6 +70,7 @@ abstract class $UserModelCopyWith<$Res> {
     DateTime? lastActive,
     bool? isVerified,
     String? country,
+    String? countryCode,
     bool? isCountryPublic,
     int? age,
     bool? isAgePublic,
@@ -107,6 +109,7 @@ class _$UserModelCopyWithImpl<$Res, $Val extends UserModel>
     Object? lastActive = freezed,
     Object? isVerified = freezed,
     Object? country = freezed,
+    Object? countryCode = freezed,
     Object? isCountryPublic = freezed,
     Object? age = freezed,
     Object? isAgePublic = freezed,
@@ -150,6 +153,10 @@ class _$UserModelCopyWithImpl<$Res, $Val extends UserModel>
             country: freezed == country
                 ? _value.country
                 : country // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            countryCode: freezed == countryCode
+                ? _value.countryCode
+                : countryCode // ignore: cast_nullable_to_non_nullable
                       as String?,
             isCountryPublic: freezed == isCountryPublic
                 ? _value.isCountryPublic
@@ -226,6 +233,7 @@ abstract class _$$UserModelImplCopyWith<$Res>
     DateTime? lastActive,
     bool? isVerified,
     String? country,
+    String? countryCode,
     bool? isCountryPublic,
     int? age,
     bool? isAgePublic,
@@ -263,6 +271,7 @@ class __$$UserModelImplCopyWithImpl<$Res>
     Object? lastActive = freezed,
     Object? isVerified = freezed,
     Object? country = freezed,
+    Object? countryCode = freezed,
     Object? isCountryPublic = freezed,
     Object? age = freezed,
     Object? isAgePublic = freezed,
@@ -306,6 +315,10 @@ class __$$UserModelImplCopyWithImpl<$Res>
         country: freezed == country
             ? _value.country
             : country // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        countryCode: freezed == countryCode
+            ? _value.countryCode
+            : countryCode // ignore: cast_nullable_to_non_nullable
                   as String?,
         isCountryPublic: freezed == isCountryPublic
             ? _value.isCountryPublic
@@ -375,6 +388,7 @@ class _$UserModelImpl implements _UserModel {
     this.lastActive,
     this.isVerified,
     this.country,
+    this.countryCode,
     this.isCountryPublic,
     this.age,
     this.isAgePublic,
@@ -415,6 +429,8 @@ class _$UserModelImpl implements _UserModel {
   final bool? isVerified;
   @override
   final String? country;
+  @override
+  final String? countryCode;
   @override
   final bool? isCountryPublic;
   @override
@@ -493,7 +509,7 @@ class _$UserModelImpl implements _UserModel {
 
   @override
   String toString() {
-    return 'UserModel(userId: $userId, username: $username, displayName: $displayName, email: $email, lastActive: $lastActive, isVerified: $isVerified, country: $country, isCountryPublic: $isCountryPublic, age: $age, isAgePublic: $isAgePublic, address: $address, bio: $bio, languages: $languages, interests: $interests, profilePictureUrl: $profilePictureUrl, friends: $friends, blockedUsers: $blockedUsers, lettersSent: $lettersSent, lettersReceived: $lettersReceived, themePreference: $themePreference)';
+    return 'UserModel(userId: $userId, username: $username, displayName: $displayName, email: $email, lastActive: $lastActive, isVerified: $isVerified, country: $country, countryCode: $countryCode, isCountryPublic: $isCountryPublic, age: $age, isAgePublic: $isAgePublic, address: $address, bio: $bio, languages: $languages, interests: $interests, profilePictureUrl: $profilePictureUrl, friends: $friends, blockedUsers: $blockedUsers, lettersSent: $lettersSent, lettersReceived: $lettersReceived, themePreference: $themePreference)';
   }
 
   @override
@@ -512,6 +528,8 @@ class _$UserModelImpl implements _UserModel {
             (identical(other.isVerified, isVerified) ||
                 other.isVerified == isVerified) &&
             (identical(other.country, country) || other.country == country) &&
+            (identical(other.countryCode, countryCode) ||
+                other.countryCode == countryCode) &&
             (identical(other.isCountryPublic, isCountryPublic) ||
                 other.isCountryPublic == isCountryPublic) &&
             (identical(other.age, age) || other.age == age) &&
@@ -557,6 +575,7 @@ class _$UserModelImpl implements _UserModel {
     lastActive,
     isVerified,
     country,
+    countryCode,
     isCountryPublic,
     age,
     isAgePublic,
@@ -595,6 +614,7 @@ abstract class _UserModel implements UserModel {
     final DateTime? lastActive,
     final bool? isVerified,
     final String? country,
+    final String? countryCode,
     final bool? isCountryPublic,
     final int? age,
     final bool? isAgePublic,
@@ -627,6 +647,8 @@ abstract class _UserModel implements UserModel {
   bool? get isVerified;
   @override
   String? get country;
+  @override
+  String? get countryCode;
   @override
   bool? get isCountryPublic;
   @override

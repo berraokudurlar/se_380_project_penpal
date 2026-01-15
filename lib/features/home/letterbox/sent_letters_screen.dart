@@ -148,9 +148,6 @@ class _SentLettersScreenState extends State<SentLettersScreen> {
                     'date': dateStr,
                     'content': letter.contentText,
                     'origin': letter.locationSentFrom,
-                    'deliveryDays': letter.deliveryTimeHours != null
-                        ? (letter.deliveryTimeHours! / 24).round()
-                        : null,
                   },
                 ),
               ),

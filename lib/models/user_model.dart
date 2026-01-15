@@ -16,6 +16,7 @@ class UserModel with _$UserModel {
 
 
     String? country,
+    String? countryCode,
     bool? isCountryPublic,
     int? age,
     bool? isAgePublic,
