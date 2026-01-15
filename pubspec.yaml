@@ -53,6 +53,7 @@ dependencies:
   html_editor_enhanced: ^2.5.1
   super_editor: ^0.3.0-dev.47
   lottie: ^3.0.0
+  country_picker: ^2.0.20
 
 
 dev_dependencies:

@@ -21,6 +21,10 @@ class LetterService {
       final senderId = currentUserId;
       if (senderId == null) throw Exception("User not logged in");
 
+      final senderDoc =
+      await _firestore.collection('users').doc(senderId).get();
+
+      final senderCountry = senderDoc.data()?['country'];
       // Find receiver by username
       final receiverQuery = await _firestore
           .collection('users')
@@ -46,6 +50,7 @@ class LetterService {
         sentDate: now,
         status: 'sent',
         contentText: contentText,
+        locationSentFrom:senderCountry,
         customizations: contentHtml != null ? {'html': contentHtml} : null,
       );
 
@@ -140,6 +145,7 @@ class LetterService {
       return {
         'displayName': data['displayName'] ?? 'Unknown',
         'username': data['username'] ?? 'unknown',
+        'country': data['country'],
       };
     } catch (e) {
       print("Error getting user info: $e");

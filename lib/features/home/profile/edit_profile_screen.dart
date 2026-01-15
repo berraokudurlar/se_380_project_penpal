@@ -4,6 +4,8 @@ import 'package:se_380_project_penpal/theme/app_theme.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:se_380_project_penpal/models/user_model.dart';
+import 'package:country_picker/country_picker.dart';
+
 
 
 
@@ -107,6 +109,18 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     _countryController.dispose();
     _ageController.dispose();
     super.dispose();
+  }
+
+  void _openCountryPicker() {
+    showCountryPicker(
+      context: context,
+      showPhoneCode: false,
+      onSelect: (Country country) {
+        setState(() {
+          _countryController.text = country.name;
+        });
+      },
+    );
   }
 
   @override

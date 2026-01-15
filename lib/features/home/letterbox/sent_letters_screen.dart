@@ -107,7 +107,7 @@ class _SentLettersScreenState extends State<SentLettersScreen> {
         mainAxisSize: MainAxisSize.min,
         children: [
           Lottie.asset(
-            'assets/images_animations/Message sent.json',
+            'assets/images_animations/Message received.json',
             width: 300,
             height: 300,
             repeat: true,
