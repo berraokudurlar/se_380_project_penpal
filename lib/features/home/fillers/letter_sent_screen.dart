@@ -39,7 +39,6 @@ class _LetterSentScreenState extends State<LetterSentScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // Success checkmark emoji
                 Lottie.asset(
                   'assets/images_animations/Emailsuccessfullysent.json',
                   width: 200,
@@ -77,14 +76,7 @@ class _LetterSentScreenState extends State<LetterSentScreen> {
 
                 const SizedBox(height: 60),
 
-                // Manual navigation button
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pushReplacement(
-                      MaterialPageRoute(builder: (_) => const HomeScreen()),
-                    );
-                  },
-                  child: Text(
+                Text(
                     'Redirecting to your letterbox...',
                     style: TextStyle(
                       fontFamily: 'Georgia',
@@ -92,7 +84,7 @@ class _LetterSentScreenState extends State<LetterSentScreen> {
                       color: Colors.brown.shade600,
                     ),
                   ),
-                ),
+
               ],
             ),
           ),
