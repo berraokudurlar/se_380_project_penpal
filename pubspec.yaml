@@ -51,6 +51,7 @@ dependencies:
   json_annotation: ^4.9.0
   flutter_html: ^3.0.0-beta.2
   html_editor_enhanced: ^2.5.1
+  super_editor: ^0.3.0-dev.47
   lottie: ^3.0.0
 
 
