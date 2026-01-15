@@ -7,14 +7,14 @@ import 'package:se_380_project_penpal/models/letter_model.dart';
 import 'detailed_letter_screen.dart';
 import 'package:intl/intl.dart';
 
-class LetterboxScreen extends StatefulWidget {
-  const LetterboxScreen({super.key});
+class SentLettersScreen extends StatefulWidget {
+  const SentLettersScreen({super.key});
 
   @override
-  State<LetterboxScreen> createState() => _LetterboxScreenState();
+  State<SentLettersScreen> createState() => _SentLettersScreenState();
 }
 
-class _LetterboxScreenState extends State<LetterboxScreen> {
+class _SentLettersScreenState extends State<SentLettersScreen> {
   final PageController _pageController = PageController();
   final LetterService _letterService = LetterService();
   late Stream<List<LetterModel>> _lettersStream;
@@ -23,7 +23,7 @@ class _LetterboxScreenState extends State<LetterboxScreen> {
   @override
   void initState() {
     super.initState();
-    _lettersStream = _letterService.getReceivedLetters();
+    _lettersStream = _letterService.getSentLetters();
   }
   @override
   void dispose() {
@@ -107,14 +107,14 @@ class _LetterboxScreenState extends State<LetterboxScreen> {
         mainAxisSize: MainAxisSize.min,
         children: [
           Lottie.asset(
-            'assets/images_animations/Message received.json',
+            'assets/images_animations/Message sent.json',
             width: 300,
             height: 300,
             repeat: true,
           ),
           const SizedBox(height: 24),
           const Text(
-            "No letters yet.\nWrite to your key pal!",
+            "You haven't sent any letters yet.",
             textAlign: TextAlign.center,
             style: TextStyle(
               color: AppColors.textMedium,
@@ -129,10 +129,10 @@ class _LetterboxScreenState extends State<LetterboxScreen> {
 
   Widget _buildLetterCard(LetterModel letter, BuildContext context) {
     return FutureBuilder<Map<String, dynamic>?>(
-      future: _letterService.getUserBasicInfo(letter.senderId),
-      builder: (context, senderSnapshot) {
-        final senderName = senderSnapshot.data?['displayName'] ?? 'Unknown';
-        final senderUsername = senderSnapshot.data?['username'] ?? 'unknown';
+      future: _letterService.getUserBasicInfo(letter.receiverId),
+      builder: (context, receiverSnapshot) {
+        final receiverName = receiverSnapshot.data?['displayName'] ?? 'Unknown';
+        final receiverUsername = receiverSnapshot.data?['username'] ?? 'unknown';
         final dateStr = DateFormat('MMMM dd, yyyy').format(letter.sentDate);
 
         return GestureDetector(
@@ -143,8 +143,8 @@ class _LetterboxScreenState extends State<LetterboxScreen> {
                 builder: (context) => DetailedLetterScreen(
                   letter: {
                     'letterId': letter.letterId,
-                    'from': senderName,
-                    'username': senderUsername,
+                    'to': receiverName,   ///bak
+                    'username': receiverUsername,
                     'date': dateStr,
                     'content': letter.contentText,
                     'origin': letter.locationSentFrom,
@@ -189,7 +189,7 @@ class _LetterboxScreenState extends State<LetterboxScreen> {
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
                                         Text(
-                                          'From: $senderName',
+                                          'To: $receiverName',
                                           style: TextStyle(
                                             fontFamily: 'Georgia',
                                             fontSize: 16,
@@ -255,7 +255,7 @@ class _LetterboxScreenState extends State<LetterboxScreen> {
                                   ),
                                   "p": Style(
                                     margin: Margins.only(bottom: 8),
-                                    ),
+                                  ),
                                 },
                               ),
                             ],

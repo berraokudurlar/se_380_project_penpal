@@ -113,7 +113,7 @@ class LetterService {
     });
   }
 
-  /// Get sender info for a letter
+ /* /// Get sender info for a letter
   Future<Map<String, dynamic>?> getSenderInfo(String senderId) async {
     try {
       final doc = await _firestore.collection('users').doc(senderId).get();
@@ -128,7 +128,26 @@ class LetterService {
       print("Error getting sender info: $e");
       return null;
     }
+  }*/
+
+  /// Get basic public user info by userId
+  Future<Map<String, dynamic>?> getUserBasicInfo(String userId) async {
+    try {
+      final doc = await _firestore.collection('users').doc(userId).get();
+      if (!doc.exists) return null;
+
+      final data = doc.data()!;
+      return {
+        'displayName': data['displayName'] ?? 'Unknown',
+        'username': data['username'] ?? 'unknown',
+      };
+    } catch (e) {
+      print("Error getting user info: $e");
+      return null;
+    }
   }
+
+
 
   /// Delete a letter (soft delete)
   Future<void> deleteLetter(String letterId) async {

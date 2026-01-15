@@ -9,6 +9,7 @@ import 'package:se_380_project_penpal/theme/app_theme.dart';
 import 'package:se_380_project_penpal/features/home/profile/edit_profile_screen.dart';
 import '../../models/user_model.dart';
 import '../services/user_service.dart';
+import 'letterbox/sent_letters_screen.dart';
 
 
 class HomeScreen extends StatefulWidget {
@@ -30,6 +31,7 @@ class _HomeScreenState extends State<HomeScreen> {
     LetterboxScreen(),
     FriendsScreen(),
     WriteLetterScreen(),
+    SentLettersScreen(),
     ProfileScreen(refreshNotifier: _profileRefreshNotifier,),
   ];
 
@@ -38,6 +40,7 @@ class _HomeScreenState extends State<HomeScreen> {
     'Letterbox',
     'Your Key Pals',
     'Write a Letter',
+    'Sent Letters',
     'Profile',
   ];
 
@@ -84,7 +87,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
 
-        actions: _selectedIndex == 3 && _currentUser != null
+        actions: _selectedIndex == 4 && _currentUser != null
             ? [
           Padding(
             padding: const EdgeInsets.only(right: 16),
@@ -198,7 +201,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   children: [
                     _drawerItem(
-                      icon: Icons.mail_outline,
+                      icon: Icons.mail_outlined,
                       label: 'Letterbox',
                       index: 0,
                     ),
@@ -213,9 +216,13 @@ class _HomeScreenState extends State<HomeScreen> {
                       index: 2,
                     ),
                     _drawerItem(
+                        icon: Icons.outgoing_mail,
+                        label: 'Sent Letters',
+                        index: 3),
+                    _drawerItem(
                       icon: Icons.person_outline,
                       label: 'Profile',
-                      index: 3,
+                      index: 4,
                     ),
                   ],
                 ),
