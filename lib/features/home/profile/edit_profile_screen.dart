@@ -784,6 +784,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       Colors.green.shade100,
       Colors.orange.shade100,
       Colors.blue.shade100,
+      Colors.pink.shade100,
     ];
 
     final Color chipColor = colors[index % colors.length];

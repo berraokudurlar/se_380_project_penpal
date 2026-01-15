@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:se_380_project_penpal/theme/app_theme.dart';
+import '../letters/write_letter_screen.dart';
 
 class DetailedLetterScreen extends StatelessWidget {
   final Map<String, dynamic> letter;
@@ -12,13 +13,19 @@ class DetailedLetterScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    /// from-to ayrımı
+    final bool isSent = letter.containsKey('to');
+    final String headerName = (letter['to'] ?? letter['from'] ?? 'Unknown') as String;
+
+
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         title: Text(
-          'From ${letter['from']}',
+          isSent ? 'To $headerName' : 'From $headerName',
           style: const TextStyle(
             fontFamily: 'Georgia',
             fontSize: 20,
@@ -65,7 +72,7 @@ class DetailedLetterScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             // Letter metadata card
-            _buildMetadataCard(),
+            _buildMetadataCard(isSent, headerName),
             const SizedBox(height: 16),
 
             // Letter content
@@ -73,14 +80,14 @@ class DetailedLetterScreen extends StatelessWidget {
             const SizedBox(height: 24),
 
             // Reply button
-            _buildReplyButton(context),
+            if (!isSent) _buildReplyButton(context),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildMetadataCard() {
+  Widget _buildMetadataCard(bool isSent, String headerName) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -96,7 +103,7 @@ class DetailedLetterScreen extends StatelessWidget {
       ),
       child: Column(
         children: [
-          _buildInfoRow(Icons.person_outline, 'From', letter['from']),
+          _buildInfoRow(Icons.person_outline, isSent ? 'To' : 'From', headerName),
           const SizedBox(height: 8),
           _buildInfoRow(Icons.calendar_today, 'Sent', letter['date']),
           const SizedBox(height: 8),
@@ -205,12 +212,13 @@ class DetailedLetterScreen extends StatelessWidget {
       shadowColor: Colors.brown.withOpacity(0.4),
       child: InkWell(
         onTap: () {
-          // TODO: Navigate to WriteLetterScreen with recipient pre-filled
-          Navigator.pop(context);
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('We will implement this!!!!!!'),
-              backgroundColor: Colors.green.shade700,
+          final String recipientUsername = letter['username'];
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => WriteLetterScreen(
+                prefilledRecipient: recipientUsername,
+              ),
             ),
           );
         },
