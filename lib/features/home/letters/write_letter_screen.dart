@@ -25,7 +25,6 @@ class _WriteLetterScreenState extends State<WriteLetterScreen> {
   late final MutableDocumentComposer _composer;
   late final Editor _editor;
 
-  // Added a GlobalKey to help SuperEditor maintain focus/state correctly
   final GlobalKey _docLayoutKey = GlobalKey();
 
   String senderName = "You";
@@ -128,6 +127,94 @@ class _WriteLetterScreenState extends State<WriteLetterScreen> {
     return buffer.toString().trim();
   }
 
+  String _convertDocumentToHtml() {
+    final buffer = StringBuffer();
+
+    for (int i = 0; i < _doc.nodeCount; i++) {
+      final node = _doc.getNodeAt(i);
+
+      if (node is ParagraphNode) {
+        buffer.write('<p>');
+        buffer.write(_convertAttributedTextToHtml(node.text));
+        buffer.write('</p>');
+      } else if (node is ListItemNode) {
+        buffer.write('<li>');
+        buffer.write(_convertAttributedTextToHtml(node.text));
+        buffer.write('</li>');
+      } else if (node is TextNode) {
+        buffer.write(_convertAttributedTextToHtml(node.text));
+        buffer.write('<br>');
+      }
+    }
+
+    return buffer.toString();
+  }
+
+  String _convertAttributedTextToHtml(AttributedText attributedText) {
+    if (attributedText.text.isEmpty) {
+      return '';
+    }
+
+    final buffer = StringBuffer();
+    final text = attributedText.text;
+
+    Set<Attribution>? previousAttributions;
+
+    for (int i = 0; i < text.length; i++) {
+      final char = text[i];
+      final currentAttributions = attributedText.getAllAttributionsAt(i);
+
+      // Check if attributions changed from previous character
+      if (previousAttributions != null && previousAttributions != currentAttributions) {
+        // Close previous tags
+        if (previousAttributions.contains(strikethroughAttribution)) buffer.write('</s>');
+        if (previousAttributions.contains(underlineAttribution)) buffer.write('</u>');
+        if (previousAttributions.contains(italicsAttribution)) buffer.write('</em>');
+        if (previousAttributions.contains(boldAttribution)) buffer.write('</strong>');
+      }
+
+      // Open new tags if this is start of a new attribution or first character
+      if (previousAttributions == null || previousAttributions != currentAttributions) {
+        if (currentAttributions.contains(boldAttribution)) buffer.write('<strong>');
+        if (currentAttributions.contains(italicsAttribution)) buffer.write('<em>');
+        if (currentAttributions.contains(underlineAttribution)) buffer.write('<u>');
+        if (currentAttributions.contains(strikethroughAttribution)) buffer.write('<s>');
+      }
+
+      // Write character
+      buffer.write(_escapeHtml(char));
+
+      // If this is the last character, close all open tags
+      if (i == text.length - 1) {
+        if (currentAttributions.contains(strikethroughAttribution)) buffer.write('</s>');
+        if (currentAttributions.contains(underlineAttribution)) buffer.write('</u>');
+        if (currentAttributions.contains(italicsAttribution)) buffer.write('</em>');
+        if (currentAttributions.contains(boldAttribution)) buffer.write('</strong>');
+      }
+
+      previousAttributions = currentAttributions;
+    }
+
+    return buffer.toString();
+  }
+
+  String _escapeHtml(String char) {
+    switch (char) {
+      case '<':
+        return '&lt;';
+      case '>':
+        return '&gt;';
+      case '&':
+        return '&amp;';
+      case '"':
+        return '&quot;';
+      case "'":
+        return '&#39;';
+      default:
+        return char;
+    }
+  }
+
   @override
   void dispose() {
     toController.dispose();
@@ -170,14 +257,16 @@ class _WriteLetterScreenState extends State<WriteLetterScreen> {
 
     try {
       final recipient = toController.text.trim();
-      final bodyText = _getPlainTextFromDocument();
+
+      // Convert document to HTML (preserves formatting)
+      final bodyTextHtml = _convertDocumentToHtml();
 
       // Build complete letter with greeting and closing
-      final greeting = "Dear $recipientDisplayName,\n";
-      final closing = "\nBest regards,\n$senderName";
+      final greeting = "<p>Dear $recipientDisplayName,</p><br>";
+      final closing = "<br><p>Best regards,<br>$senderName</p>";
 
-      // Complete letter
-      final fullLetter = "$greeting\n\n$bodyText\n\n$closing";
+      // Complete letter with HTML
+      final fullLetter = "$greeting$bodyTextHtml$closing";
 
       final letterId = await _letterService.sendLetter(
         receiverUsername: recipient,
@@ -224,11 +313,10 @@ class _WriteLetterScreenState extends State<WriteLetterScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      resizeToAvoidBottomInset: true, // Handle keyboard showing up
+      resizeToAvoidBottomInset: true,
       body: SafeArea(
         child: Column(
           children: [
-            // 1. The Letter Paper (Expanded to take available space)
             Expanded(
               child: Container(
                 margin: const EdgeInsets.fromLTRB(16, 16, 16, 0),
@@ -249,14 +337,11 @@ class _WriteLetterScreenState extends State<WriteLetterScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Recipient Field
                       _buildRecipientField(),
-
                       const SizedBox(height: 16),
                       Divider(color: Colors.brown.shade200, thickness: 1),
                       const SizedBox(height: 16),
 
-                      // Greeting
                       if (recipientDisplayName.isNotEmpty) ...[
                         Text(
                           "Dear $recipientDisplayName,",
@@ -270,8 +355,6 @@ class _WriteLetterScreenState extends State<WriteLetterScreen> {
                         const SizedBox(height: 16),
                       ],
 
-                      // The Editor (Expanded)
-                      // This replaces the fixed height container and lets SuperEditor handle scrolling
                       Expanded(
                         child: IgnorePointer(
                           ignoring: isSending,
@@ -301,7 +384,6 @@ class _WriteLetterScreenState extends State<WriteLetterScreen> {
                         ),
                       ),
 
-                      // Closing & Toolbar
                       const SizedBox(height: 16),
                       Text(
                         "Best regards,\n$senderName",
@@ -320,13 +402,11 @@ class _WriteLetterScreenState extends State<WriteLetterScreen> {
               ),
             ),
 
-            // 2. Guidelines (Placed below paper)
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               child: _buildGuidelines(),
             ),
 
-            // 3. Send Button Area
             Container(
               color: Colors.transparent,
               padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
