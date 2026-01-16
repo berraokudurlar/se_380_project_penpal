@@ -124,6 +124,7 @@ class LetterService {
     return _firestore
         .collection('letters')
         .where('receiverId', isEqualTo: userId)
+        .where('status', isEqualTo: 'delivered') // Only delivered letters
         .where('deleted', isEqualTo: false)
         .orderBy('sentDate', descending: true)
         .snapshots()
@@ -196,4 +197,36 @@ class LetterService {
       return null;
     }
   }
+
+  Future<void> checkAndUpdateDeliveredLetters() async {
+    final userId = currentUserId;
+    if (userId == null) return;
+
+    final now = DateTime.now();
+
+    final query = await _firestore
+        .collection('letters')
+        .where('receiverId', isEqualTo: userId)
+        .where('status', isEqualTo: 'sent')
+        .get();
+
+    for (final doc in query.docs) {
+      final data = doc.data();
+      final Timestamp? arrivalTs = data['estimatedArrivalDate'];
+
+      if (arrivalTs == null) continue;
+
+      final arrivalDate = arrivalTs.toDate();
+
+      if (now.isAfter(arrivalDate)) {
+        await doc.reference.update({
+          'status': 'delivered',
+          'receivedDate': now,
+        });
+      }
+    }
+  }
+
+
+
 }

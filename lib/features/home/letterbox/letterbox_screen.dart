@@ -23,6 +23,7 @@ class _LetterboxScreenState extends State<LetterboxScreen> {
   @override
   void initState() {
     super.initState();
+    _letterService.checkAndUpdateDeliveredLetters();
     _lettersStream = _letterService.getReceivedLetters();
   }
   @override

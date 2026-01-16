@@ -11,7 +11,7 @@ class LetterModel with _$LetterModel {
 
     required DateTime sentDate,
     DateTime? receivedDate,
-    @Default('draft') String status, // draft, sent, scheduled, delivered?
+    @Default('draft') String status, //  sent, delivered?
 
     DateTime? estimatedArrivalDate,
     int? estimatedArrivalDays,
