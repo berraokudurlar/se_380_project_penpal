@@ -28,6 +28,7 @@ class LetterService {
 
 
       final senderCountryCode = senderDoc.data()?['countryCode'];
+      final senderCountryName = senderDoc.data()?['country'];
 
 
 
@@ -45,7 +46,10 @@ class LetterService {
       final receiverDoc = receiverQuery.docs.first;
       final receiverId = receiverDoc.id;
 
+
+
       final receiverCountryCode = receiverDoc.data()['countryCode'];
+      final receiverCountryName = receiverDoc.data()['country'];
 
 
       //Arrival Time
@@ -77,8 +81,8 @@ class LetterService {
         estimatedArrivalDate: estimatedArrivalDate,
         status: 'sent',
         contentText: contentText,
-        locationSentFrom:senderCountryCode,
-        locationReceived:receiverCountryCode,
+        locationSentFrom:senderCountryName,
+        locationReceived:receiverCountryName,
         customizations: contentHtml != null ? {'html': contentHtml} : null,
       );
       

@@ -145,9 +145,12 @@ class _SentLettersScreenState extends State<SentLettersScreen> {
                     'letterId': letter.letterId,
                     'to': receiverName,   ///bak
                     'username': receiverUsername,
-                    'date': dateStr,
                     'content': letter.contentText,
+
                     'origin': letter.locationSentFrom,
+                    'sentDate': letter.sentDate,
+                    'arrivalDays': letter.estimatedArrivalDays,
+                    'arrivalDate': letter.estimatedArrivalDate,
                   },
                 ),
               ),

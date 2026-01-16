@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:intl/intl.dart';
 import 'package:se_380_project_penpal/theme/app_theme.dart';
 import '../letters/write_letter_screen.dart';
 
@@ -17,6 +18,16 @@ class DetailedLetterScreen extends StatelessWidget {
     /// from-to ayrımı
     final bool isSent = letter.containsKey('to');
     final String headerName = (letter['to'] ?? letter['from'] ?? 'Unknown') as String;
+
+    final DateTime? arrivalDate = letter['arrivalDate'];
+    final int? arrivalDays = letter['arrivalDays'];
+
+    final bool isDelivered = arrivalDate != null
+        ? DateTime.now().isAfter(arrivalDate)
+        : false;
+
+    final String statusText = isDelivered ? 'Delivered' : 'On the way';
+
 
 
     return Scaffold(
@@ -72,7 +83,7 @@ class DetailedLetterScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             // Letter metadata card
-            _buildMetadataCard(isSent, headerName),
+            _buildMetadataCard(isSent, headerName, arrivalDate, arrivalDays, statusText, isDelivered),
             const SizedBox(height: 16),
 
             // Letter content
@@ -87,7 +98,8 @@ class DetailedLetterScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildMetadataCard(bool isSent, String headerName) {
+  Widget _buildMetadataCard(bool isSent, String headerName,DateTime ? arrivalDate, int? arrivalDays,String statusText, bool isDelivered) {
+    final DateTime? sentDate = letter['sentDate'];
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -103,19 +115,61 @@ class DetailedLetterScreen extends StatelessWidget {
       ),
       child: Column(
         children: [
-          _buildInfoRow(Icons.person_outline, isSent ? 'To' : 'From', headerName),
+          // From / To
+          _buildInfoRow(
+            Icons.person_outline,
+            isSent ? 'To' : 'From',
+            headerName,
+          ),
           const SizedBox(height: 8),
-          _buildInfoRow(Icons.calendar_today, 'Sent', letter['date']),
-          const SizedBox(height: 8),
-          _buildInfoRow(Icons.public, 'Origin', letter['origin'] ?? 'Unknown'),
-          if (letter['deliveryDays'] != null) ...[
+
+          // Sent date
+          if (sentDate != null) ...[
+            _buildInfoRow(
+              Icons.calendar_today,
+              'Sent',
+              DateFormat('MMMM dd, yyyy').format(sentDate),
+            ),
+            const SizedBox(height: 8),
+          ],
+
+          // Status (On the way / Delivered)
+          _buildInfoRow(
+            isDelivered
+                ? Icons.mark_email_read
+                : Icons.local_shipping_outlined,
+            'Status',
+            statusText,
+          ),
+
+          // Journey (X days)
+          if (arrivalDays != null) ...[
             const SizedBox(height: 8),
             _buildInfoRow(
-              Icons.local_shipping_outlined,
+              Icons.timelapse,
               'Journey',
-              '${letter['deliveryDays']} days',
+              '$arrivalDays days',
             ),
           ],
+
+          // Arrival date
+          if (arrivalDate != null) ...[
+            const SizedBox(height: 8),
+            _buildInfoRow(
+              Icons.event,
+              isDelivered ? 'Arrived' : 'Arrives',
+              DateFormat('MMMM dd, yyyy').format(arrivalDate),
+            ),
+          ],
+
+          const SizedBox(height: 8),
+
+          // Origin
+          _buildInfoRow(
+            Icons.public,
+            'Origin',
+            letter['origin'] ?? 'Unknown',
+          ),
         ],
       ),
     );
